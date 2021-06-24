@@ -6,14 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "patch-package"
+    "lint": "next lint"
   },
   "dependencies": {
     "@netlify/plugin-nextjs": "^3.4.2",
     "fp-ts": "^2.10.5",
     "next": "11.0.1",
-    "patch-package": "^6.4.7",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
