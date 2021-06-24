@@ -1,0 +1,13 @@
+diff --git a/node_modules/next/dist/next-server/lib/utils.d.ts b/node_modules/next/dist/next-server/lib/utils.d.ts
+index 7c792bb..4deb69e 100644
+--- a/node_modules/next/dist/next-server/lib/utils.d.ts
++++ b/node_modules/next/dist/next-server/lib/utils.d.ts
+@@ -191,7 +191,7 @@ export interface NextApiRequest extends IncomingMessage {
+     cookies: {
+         [key: string]: string;
+     };
+-    body: any;
++    body: unknown;
+     env: Env;
+     preview?: boolean;
+     /**
