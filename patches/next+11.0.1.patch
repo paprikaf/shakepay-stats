@@ -1,0 +1,28 @@
+diff --git a/node_modules/next/dist/next-server/lib/utils.d.ts b/node_modules/next/dist/next-server/lib/utils.d.ts
+index 7c792bb..49d82bc 100644
+--- a/node_modules/next/dist/next-server/lib/utils.d.ts
++++ b/node_modules/next/dist/next-server/lib/utils.d.ts
+@@ -175,10 +175,23 @@ export declare type DocumentProps = DocumentInitialProps & {
+     locale?: string;
+     disableOptimizedLoading?: boolean;
+ };
++
++
++/**
++ * We don't need a full set of methods since we're only using these two
++ */
++export const enum HttpMethod {
++    Post = "POST",
++    Get = "GET"
++}
++
+ /**
+  * Next `API` route request
+  */
+ export interface NextApiRequest extends IncomingMessage {
++    // Patching node's method property to not be _any_ string but instead a finite list of known methods.
++    method: HttpMethod;
++
+     /**
+      * Object of `query` values from url
+      */
