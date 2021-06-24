@@ -1,5 +1,5 @@
 diff --git a/node_modules/next/dist/next-server/lib/utils.d.ts b/node_modules/next/dist/next-server/lib/utils.d.ts
-index 7c792bb..49d82bc 100644
+index 7c792bb..bc3e556 100644
 --- a/node_modules/next/dist/next-server/lib/utils.d.ts
 +++ b/node_modules/next/dist/next-server/lib/utils.d.ts
 @@ -175,10 +175,23 @@ export declare type DocumentProps = DocumentInitialProps & {
@@ -11,7 +11,7 @@ index 7c792bb..49d82bc 100644
 +/**
 + * We don't need a full set of methods since we're only using these two
 + */
-+export const enum HttpMethod {
++export enum HttpMethod {
 +    Post = "POST",
 +    Get = "GET"
 +}
