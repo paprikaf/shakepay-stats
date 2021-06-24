@@ -1,16 +1,27 @@
 import * as Next from "next";
 
-const withMethod =
-  (method: Next.HttpMethod) =>
-  <T>(fn: Next.NextApiHandler<T>) =>
-  (request: Next.NextApiRequest, response: Next.NextApiResponse<T>) => {
-    if (request.method === method) {
-      return fn(request, response);
-    }
+type NotFoundError = { error: string };
 
-    // TODO: use enum for http code
-    // TODO: Force returning a response object instead of mutating
-    response.status(404);
+enum HttpMethod {
+  Post = "POST",
+  Get = "GET",
+}
+
+const withMethod =
+  (method: HttpMethod) =>
+  <T>(fn: Next.NextApiHandler<T>) =>
+  (
+    request: Next.NextApiRequest,
+    response: Next.NextApiResponse<T | NotFoundError>
+  ): ReturnType<Next.NextApiHandler<T | NotFoundError>> => {
+    console.log(request.method);
+    if (request.method === method) {
+      fn(request, response);
+    } else {
+      // TODO: use enum for http code
+      // TODO: Force returning a response object instead of mutating
+      response.status(404).send({ error: "Not found" });
+    }
   };
 
-export const post = withMethod(Next.HttpMethod.Post);
+export const post = withMethod(HttpMethod.Post);
