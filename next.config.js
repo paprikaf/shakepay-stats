@@ -1,5 +1,8 @@
 module.exports = {
   reactStrictMode: true,
   target: "serverless",
-  distDir: 'dist'
+  distDir: 'dist',
+  api: {
+    bodyParser: false
+  }
 }

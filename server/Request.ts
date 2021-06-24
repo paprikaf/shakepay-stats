@@ -1,27 +1,46 @@
+import * as E from "fp-ts/Either";
 import * as Next from "next";
+import * as t from "io-ts";
 
-type NotFoundError = { error: string };
+import { failure as formatValidationErrors } from "io-ts/PathReporter";
+import { pipe } from "fp-ts/function";
+
+interface NotFoundError {
+  error: "Not found";
+}
+
+interface ValidationError {
+  errors: string[];
+}
 
 enum HttpMethod {
   Post = "POST",
   Get = "GET",
 }
 
-const withMethod =
-  (method: HttpMethod) =>
-  <T>(fn: Next.NextApiHandler<T>) =>
-  (
-    request: Next.NextApiRequest,
-    response: Next.NextApiResponse<T | NotFoundError>
-  ): ReturnType<Next.NextApiHandler<T | NotFoundError>> => {
-    console.log(request.method);
-    if (request.method === method) {
-      fn(request, response);
-    } else {
-      // TODO: use enum for http code
-      // TODO: Force returning a response object instead of mutating
-      response.status(404).send({ error: "Not found" });
+export const post =
+  <A>(decoder: t.Decoder<unknown, A>) =>
+  <B>(
+    fn: (
+      request: Next.NextApiRequest,
+      response: Next.NextApiResponse<B>,
+      body: A
+    ) => ReturnType<Next.NextApiHandler<B>>
+  ): Next.NextApiHandler<B | NotFoundError | ValidationError> =>
+  (request, response) => {
+    if (request.method !== HttpMethod.Post) {
+      return;
     }
-  };
 
-export const post = withMethod(HttpMethod.Post);
+    pipe(
+      decoder.decode(request.body),
+      E.fold(
+        (errors) => {
+          return response.status(400).send({
+            errors: formatValidationErrors(errors),
+          });
+        },
+        (value) => fn(request, response, value)
+      )
+    );
+  };
