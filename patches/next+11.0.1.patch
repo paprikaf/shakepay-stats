@@ -26,3 +26,23 @@ index 7c792bb..49d82bc 100644
      /**
       * Object of `query` values from url
       */
+diff --git a/node_modules/next/types/index.d.ts b/node_modules/next/types/index.d.ts
+index 476d491..1a76733 100644
+--- a/node_modules/next/types/index.d.ts
++++ b/node_modules/next/types/index.d.ts
+@@ -12,6 +12,7 @@ import {
+   NextApiResponse,
+   NextApiRequest,
+   NextApiHandler,
++  HttpMethod,
+   // @ts-ignore This path is generated at build time and conflicts otherwise
+ } from '../dist/next-server/lib/utils'
+ 
+@@ -88,6 +89,7 @@ export {
+   NextApiResponse,
+   NextApiRequest,
+   NextApiHandler,
++  HttpMethod,
+ }
+ 
+ export type PreviewData = string | false | object | undefined
