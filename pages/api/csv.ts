@@ -9,7 +9,6 @@ import connect from "next-connect";
 import csv from "csv-parser";
 import { failure as formatValidationErrors } from "io-ts/PathReporter";
 import fs from "fs";
-import { map } from "fp-ts/lib/Functor";
 import multer from "multer";
 
 const UploadErrorT = t.createTaggedUnion([
