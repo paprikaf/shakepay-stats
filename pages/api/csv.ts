@@ -1,44 +1,47 @@
+import * as E from "fp-ts/Either";
 import * as Next from "next";
-import * as Request from "server/Request";
-import * as TE from "fp-ts/TaskEither";
-import * as t from "io-ts";
+import * as Response from "lib/Response";
+import * as t from "lib/io-ts";
 
+import { flow, pipe } from "fp-ts/function";
+
+import connect from "next-connect";
 import csv from "fast-csv";
+import { failure as formatValidationErrors } from "io-ts/PathReporter";
 import multer from "multer";
-import { pipe } from "fp-ts/function";
+
+const UploadErrorT = t.createTaggedUnion([
+  t.taggedUnionMember(
+    "DecodeError",
+    t.type(
+      {
+        errors: t.assertion<t.Errors>(),
+      },
+      "DecodeError"
+    )
+  ),
+  t.taggedUnionMember("NoFile"),
+]);
+
+const UploadError = t.createStructuredTaggedUnion(UploadErrorT);
+export type UploadError = t.TypeOf<typeof UploadErrorT>;
 
 const unimplemented = () => {
   throw new Error("Unimplemented");
 };
 
-type Middleware = (
-  request: Next.NextApiRequest,
-  response: Next.NextApiResponse<unknown>,
-  result: (result: unknown) => void
-) => void;
+const Upload = t.type(
+  {
+    fieldname: t.string,
+    originalname: t.string,
+    encoding: t.string,
+    mimetype: t.string,
+    buffer: t.assertion<Buffer>(),
+  },
+  "Upload"
+);
 
-function runMiddleware(middleware: Middleware) {
-  return (
-    request: Next.NextApiRequest,
-    response: Next.NextApiResponse
-  ): TE.TaskEither<
-    Error,
-    { request: Next.NextApiRequest; response: Next.NextApiResponse<unknown> }
-  > => {
-    return TE.tryCatch(
-      () =>
-        new Promise((resolve, reject) => {
-          middleware(request, response, (result) => {
-            if (result instanceof Error) {
-              return reject(result);
-            }
-            return resolve({ request, response });
-          });
-        }),
-      (_) => new Error("Middleware failed to run")
-    );
-  };
-}
+interface Upload extends t.TypeOf<typeof Upload> {}
 
 const Csv = t.array(t.type({ a: t.string }), "Csv");
 interface Csv extends t.TypeOf<typeof Csv> {}
@@ -66,26 +69,57 @@ export const config = {
   },
 };
 
-const runUpload = pipe(
-  multer({ storage: multer.memoryStorage() }).single(
-    "csv_file"
-    // We must cast because of type issues between the Node Request/Response interfaces and Next.
-  ) as unknown as Middleware,
-  runMiddleware
-);
+const handler = connect({
+  onNoMatch: (
+    _request: Next.NextApiRequest,
+    response: Next.NextApiResponse<unknown>
+  ) => {
+    response.status(404).json({ error: "Not found" });
+  },
+});
 
-async function handler(
-  _request: Next.NextApiRequest,
-  _response: Next.NextApiResponse<unknown>
-) {
-  await pipe(
-    runUpload(_request, _response),
-    TE.map(({ request, response }) => {
-      console.log("yolo", request.file);
-    })
-  )();
+handler.use(multer({ storage: multer.memoryStorage() }).single("csv_file"));
 
-  _response.send({});
-}
+/**
+ * We have to specify that the request holds a potential uploaded file.
+ * To be safe, we can't assume its type until we decode it, similar to how we should be decoding a request body.
+ */
+handler.post<{ file?: unknown }>((request, response) => {
+  pipe(
+    request.file,
+    E.fromNullable(UploadError.NoFile({})),
+    E.chain(
+      flow(
+        Upload.decode,
+        E.mapLeft((errors) => UploadError.DecodeError({ value: { errors } }))
+      )
+    ),
+    E.fold<UploadError, Upload, Response.Descriptor<Upload>>(
+      UploadError.match({
+        DecodeError: ({ value }) => ({
+          statusCode: 400,
+          body: {
+            error:
+              "Invalid file: " +
+              formatValidationErrors(value.errors).join("; "),
+          },
+        }),
+        NoFile: () => ({
+          statusCode: 400,
+          body: {
+            error: "file not found",
+          },
+        }),
+      }),
+      (file) => ({
+        statusCode: 200,
+        body: file,
+      })
+    ),
+    ({ statusCode, body }) => {
+      response.status(statusCode).json(body);
+    }
+  );
+});
 
 export default handler;
