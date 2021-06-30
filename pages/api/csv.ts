@@ -1,5 +1,7 @@
 import * as E from "fp-ts/Either";
+import * as Errors from "lib/Errors";
 import * as Next from "next";
+import * as Response from "lib/Response";
 import * as TE from "fp-ts/TaskEither";
 import * as t from "lib/io-ts";
 
@@ -7,31 +9,18 @@ import { flow, pipe } from "fp-ts/function";
 
 import connect from "next-connect";
 import csv from "csv-parser";
-import { failure as formatValidationErrors } from "io-ts/PathReporter";
 import fs from "fs";
 import multer from "multer";
 
-const UploadErrorT = t.createTaggedUnion([
-  t.taggedUnionMember(
-    "DecodeError",
-    t.type(
-      {
-        errors: t.assertion<t.Errors>(),
-      },
-      "DecodeError"
-    )
-  ),
-  t.taggedUnionMember("NoFile"),
-  t.taggedUnionMember("ParseError"),
-]);
-
-const UploadError = t.createStructuredTaggedUnion(UploadErrorT);
-export type UploadError = t.TypeOf<typeof UploadErrorT>;
+const validate = <I, A>(codec: t.Decoder<I, A>) =>
+  flow(
+    codec.decode,
+    E.mapLeft((errors) => Errors.Upload.DecodeError({ value: { errors } }))
+  );
 
 const readFile = (fileName: string) =>
   TE.tryCatch(
     () => {
-      // TODO: handle error?
       return new Promise((resolve, reject) => {
         const stream: any[] = [];
 
@@ -44,7 +33,7 @@ const readFile = (fileName: string) =>
           });
       });
     },
-    (_) => UploadError.ParseError({})
+    (_) => Errors.Upload.CsvParseError({})
   );
 
 const Upload = t.type(
@@ -98,53 +87,17 @@ handler.use(
 handler.post<{ file?: unknown }>((request, response) => {
   pipe(
     request.file,
-    E.fromNullable(UploadError.NoFile({})),
+    E.fromNullable(Errors.Upload.NoFile({})),
     TE.fromEither,
-    TE.chainEitherK(
-      flow(
-        Upload.decode,
-        E.mapLeft((errors) => UploadError.DecodeError({ value: { errors } }))
-      )
-    ),
+    TE.chainEitherK(validate(Upload)),
     TE.chain((file) => readFile(file.path)),
-    TE.chainEitherK(
-      flow(
-        Csv.decode,
-        E.mapLeft((errors) => UploadError.DecodeError({ value: { errors } }))
-      )
-    ),
+    TE.chainEitherK(validate(Csv)),
     TE.mapLeft(
-      flow(
-        UploadError.match({
-          ParseError: () => ({
-            statusCode: 400,
-            body: {
-              error: "Parse error",
-            },
-          }),
-          DecodeError: ({ value }) => ({
-            statusCode: 400,
-            body: {
-              error:
-                "Invalid file: " +
-                formatValidationErrors(value.errors).join("; "),
-            },
-          }),
-          NoFile: () => ({
-            statusCode: 400,
-            body: {
-              error: "file not found",
-            },
-          }),
-        }),
-        (descriptor) => {
-          response.status(descriptor.statusCode).json(descriptor.body);
-        }
-      )
+      flow(Response.fromUploadError, (descriptor) => {
+        response.status(descriptor.status).json(descriptor);
+      })
     ),
-    TE.map((csv) => {
-      response.json(csv);
-    })
+    TE.map(response.json)
   )();
 });
 
