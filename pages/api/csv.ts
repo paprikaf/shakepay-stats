@@ -85,7 +85,7 @@ handler.use(
  * To be safe, we can't assume its type until we decode it, similar to how we should be decoding a request body.
  */
 handler.post<{ file?: unknown }>((request, response) => {
-  pipe(
+  const sendResponse = pipe(
     request.file,
     E.fromNullable(Errors.Upload.NoFile({})),
     TE.fromEither,
@@ -98,7 +98,9 @@ handler.post<{ file?: unknown }>((request, response) => {
       })
     ),
     TE.map(response.json)
-  )();
+  );
+
+  sendResponse();
 });
 
 export default handler;
