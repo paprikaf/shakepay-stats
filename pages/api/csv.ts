@@ -1,3 +1,4 @@
+import * as Csv from "lib/Csv";
 import * as E from "fp-ts/Either";
 import * as Errors from "lib/Errors";
 import * as Next from "next";
@@ -52,19 +53,6 @@ const Upload = t.type(
 
 interface Upload extends t.TypeOf<typeof Upload> {}
 
-const Csv = t.array(
-  t.type({
-    id: t.string,
-    firstName: t.string,
-    lastName: t.string,
-    country: t.string,
-    lastLogin: t.string,
-  }),
-  "Csv"
-);
-
-interface Csv extends t.TypeOf<typeof Csv> {}
-
 const handler = connect({
   onNoMatch: (
     _request: Next.NextApiRequest,
@@ -74,10 +62,11 @@ const handler = connect({
   },
 });
 
+// TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
     dest: "tmp/",
-  }).single("csv_file")
+  }).single(Csv.fieldName)
 );
 
 /**
@@ -91,7 +80,7 @@ handler.post<{ file?: unknown }>((request, response) => {
     TE.fromEither,
     TE.chainEitherK(validate(Upload)),
     TE.chain((file) => readFile(file.path)),
-    TE.chainEitherK(validate(Csv)),
+    TE.chainEitherK(validate(Csv.Csv)),
     TE.mapLeft(
       flow(Response.fromUploadError, (descriptor) => {
         response.status(descriptor.status).json(descriptor);
