@@ -70,13 +70,16 @@ export default function Home() {
           <li>about</li>
         </ul>
       </nav>
-      <div className="flex flex-grow">
+      <div className="grid grid-cols-2 gap-x-2">
         <header>
           <h1 className="text-3xl mb-2">What's my BTC worth on shakepay</h1>
           <p>
             {/* TODO explain to go get the history in shakepay */}
-            Upload your shakepay <a href="">transactions history</a> and
-            discover how much you gained or lost over time.
+            Upload your shakepay{" "}
+            <a href="" className="underline">
+              transactions history
+            </a>{" "}
+            and discover how much you gained or lost over time.
           </p>
         </header>
         <form
@@ -84,19 +87,46 @@ export default function Home() {
           method="post"
           action="/api/csv"
           onSubmit={handleSubmit}
+          className="flex flex-col"
         >
-          <label>
-            Choose a file
-            <input
-              type="file"
-              name="csv_upload"
-              accept="text/csv"
-              onChange={handleFileChange}
-            />
+          <label
+            className="border-dashed border-2 border-gray-200 p-6 cursor-pointer flex-grow"
+            htmlFor="input-upload"
+          >
+            <span className="text-gray-600">
+              {pipe(
+                file,
+                O.map((f) => (
+                  <span>
+                    Ready to upload{" "}
+                    <span className="bg-blue-200 py-1 px-2 rounded">
+                      {f.name}
+                    </span>
+                  </span>
+                )),
+                O.getOrElse<React.ReactNode>(
+                  () =>
+                    "Drag & drop here or click to browse files on your computer"
+                )
+              )}
+            </span>
           </label>
-          <button type="submit" disabled={O.isNone(file)}>
-            Submit
-          </button>
+          <input
+            id="input-upload"
+            type="file"
+            name="csv_upload"
+            accept="text/csv"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          {O.isSome(file) && (
+            <button
+              type="submit"
+              className="bg-green-300 px-4 py-1 rounded text-black self-center w-full mt-4"
+            >
+              Submit
+            </button>
+          )}
         </form>
       </div>
     </div>
