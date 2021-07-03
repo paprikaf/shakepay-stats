@@ -30,6 +30,7 @@ export default function Home() {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
+    // TODO: handle error in UI
     pipe(
       file,
       TE.fromOption(() => new Error("No file provided")),
@@ -43,7 +44,7 @@ export default function Home() {
           (_) => new Error("Could parse response as json")
         )
       ),
-      // TODO: decode
+      // TODO: We're going to eventually receive some other response for which we'll need a type.
       TE.map((body) => body as Csv.Csv),
       TE.map(console.log)
     )();
@@ -62,24 +63,42 @@ export default function Home() {
   };
 
   return (
-    <form
-      encType="multipart/form-data"
-      method="post"
-      action="/api/csv"
-      onSubmit={handleSubmit}
-    >
-      <label>
-        Choose a file
-        <input
-          type="file"
-          name="csv_upload"
-          accept="text/csv"
-          onChange={handleFileChange}
-        />
-      </label>
-      <button type="submit" disabled={O.isNone(file)}>
-        Submit
-      </button>
-    </form>
+    <div className="py-6 px-12 flex flex-col h-screen">
+      <nav className="flex items-center justify-between mb-64">
+        <span>shakepay.stats</span>
+        <ul className="flex items-center ml-4">
+          <li>about</li>
+        </ul>
+      </nav>
+      <div className="flex flex-grow">
+        <header>
+          <h1 className="text-3xl mb-2">What's my BTC worth on shakepay</h1>
+          <p>
+            {/* TODO explain to go get the history in shakepay */}
+            Upload your shakepay <a href="">transactions history</a> and
+            discover how much you gained or lost over time.
+          </p>
+        </header>
+        <form
+          encType="multipart/form-data"
+          method="post"
+          action="/api/csv"
+          onSubmit={handleSubmit}
+        >
+          <label>
+            Choose a file
+            <input
+              type="file"
+              name="csv_upload"
+              accept="text/csv"
+              onChange={handleFileChange}
+            />
+          </label>
+          <button type="submit" disabled={O.isNone(file)}>
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
