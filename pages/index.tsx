@@ -103,14 +103,14 @@ export default function Home() {
       </nav>
       <div className="flex-grow flex flex-col">
         <header>
-          <h1 className="text-3xl mb-2">What's my BTC worth on shakepay</h1>
+          <h1 className="text-3xl mb-2">Learn what's your BTC worth on shakepay</h1>
           <p>
             {/* TODO explain to go get the history in shakepay */}
             Upload your shakepay{" "}
             <a href="" className="underline">
               transactions history
             </a>{" "}
-            and discover how much you gained or lost over time.
+            and discover how much you gained or lost over time 💰.
           </p>
         </header>
         <form
