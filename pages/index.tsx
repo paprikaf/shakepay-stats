@@ -1,15 +1,17 @@
+import * as A from "fp-ts/Array";
 import * as Csv from "lib/Csv";
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as R from "fp-ts/Record";
 import * as TE from "fp-ts/TaskEither";
 
+import { DropzoneOptions, useDropzone } from "react-dropzone";
+
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
 import { pipe } from "fp-ts/function";
 import styles from "../styles/Home.module.css";
-import { useDropzone } from "react-dropzone";
 
 const upload = (file: File) =>
   TE.tryCatch(
@@ -26,10 +28,11 @@ const upload = (file: File) =>
   );
 
 const Dropzone: React.FC = ({ onDrop, accept }) => {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: "text/csv",
-  });
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
+    useDropzone({
+      onDrop,
+      accept: "text/csv",
+    });
 
   return (
     <div
@@ -86,9 +89,8 @@ export default function Home() {
     );
   };
 
-  const onDrop = React.useCallback((acceptedFiles) => {
-    // this callback will be called after files get dropped, we will get the acceptedFiles. If you want, you can even access the rejected files too
-    console.log(acceptedFiles);
+  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+    pipe(acceptedFiles, A.head, setFile);
   }, []);
 
   return (
@@ -119,46 +121,42 @@ export default function Home() {
           className="flex flex-col mt-8 flex-grow"
         >
           <div className="border-dashed border-2 border-gray-200 p-6 h-full">
-            <Dropzone onDrop={onDrop} />
+            {pipe(
+              file,
+              O.map((f) => (
+                <>
+                  <div>
+                    Ready to upload{" "}
+                    <span className="bg-blue-200 py-1 px-2 rounded">
+                      <span className="mr-1">{f.name}</span>
+                      <button
+                        type="button"
+                        className="p-2 -m-2"
+                        onClick={() => setFile(O.none)}
+                      >
+                        &times;
+                      </button>
+                    </span>
+                  </div>
+                  <button
+                    type="submit"
+                    className="bg-green-300 px-4 py-1 rounded text-black self-center mt-4"
+                  >
+                    Upload
+                  </button>
+                </>
+              )),
+              O.getOrElse(() => <Dropzone onDrop={onDrop} />)
+            )}
           </div>
           {/* <label
             className="border-dashed border-2 border-gray-200 p-6 cursor-pointer flex-grow"
             htmlFor="input-upload"
           >
             <span className="text-gray-600">
-              {pipe(
-                file,
-                O.map((f) => (
-                  <span>
-                    Ready to upload{" "}
-                    <span className="bg-blue-200 py-1 px-2 rounded">
-                      {f.name}
-                    </span>
-                  </span>
-                )),
-                O.getOrElse<React.ReactNode>(
-                  () =>
-                    "Drag & drop here or click to browse files on your computer"
-                )
-              )}
+              {}
             </span>
           </label> */}
-          <input
-            id="input-upload"
-            type="file"
-            name="csv_upload"
-            accept="text/csv"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          {O.isSome(file) && (
-            <button
-              type="submit"
-              className="bg-green-300 px-4 py-1 rounded text-black self-center w-full mt-4"
-            >
-              Upload
-            </button>
-          )}
         </form>
       </div>
     </div>
