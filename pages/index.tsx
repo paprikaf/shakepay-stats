@@ -103,7 +103,9 @@ export default function Home() {
       </nav>
       <div className="flex-grow flex flex-col">
         <header>
-          <h1 className="text-3xl mb-2">Learn what's your BTC worth on shakepay</h1>
+          <h1 className="text-3xl mb-2">
+            Learn what's your BTC worth on shakepay
+          </h1>
           <p>
             {/* TODO explain to go get the history in shakepay */}
             Upload your shakepay{" "}
@@ -149,14 +151,7 @@ export default function Home() {
               O.getOrElse(() => <Dropzone onDrop={onDrop} />)
             )}
           </div>
-          {/* <label
-            className="border-dashed border-2 border-gray-200 p-6 cursor-pointer flex-grow"
-            htmlFor="input-upload"
-          >
-            <span className="text-gray-600">
-              {}
-            </span>
-          </label> */}
+          <a className="underline text-gray-400 mt-4 text-sm">Learn how your data is being handled</a>
         </form>
       </div>
     </div>
