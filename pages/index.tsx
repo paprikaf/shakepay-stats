@@ -9,6 +9,7 @@ import Image from "next/image";
 import React from "react";
 import { pipe } from "fp-ts/function";
 import styles from "../styles/Home.module.css";
+import { useDropzone } from "react-dropzone";
 
 const upload = (file: File) =>
   TE.tryCatch(
@@ -23,6 +24,29 @@ const upload = (file: File) =>
     },
     (_) => new Error("Upload failed")
   );
+
+const Dropzone: React.FC = ({ onDrop, accept }) => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: "text/csv",
+  });
+
+  return (
+    <div
+      {...getRootProps()}
+      className="h-full flex items-center justify-center cursor-pointer"
+    >
+      <input className="" {...getInputProps()} />
+      {isDragActive ? (
+        <p className="dropzone-content">Release to drop the files here</p>
+      ) : (
+        <p className="dropzone-content">
+          Drag &amp; drop some files here, or click to select files
+        </p>
+      )}
+    </div>
+  );
+};
 
 export default function Home() {
   const [file, setFile] = React.useState<O.Option<File>>(O.none);
@@ -62,15 +86,20 @@ export default function Home() {
     );
   };
 
+  const onDrop = React.useCallback((acceptedFiles) => {
+    // this callback will be called after files get dropped, we will get the acceptedFiles. If you want, you can even access the rejected files too
+    console.log(acceptedFiles);
+  }, []);
+
   return (
     <div className="py-6 px-12 flex flex-col h-screen">
-      <nav className="flex items-center justify-between mb-64">
+      <nav className="flex items-center justify-between mb-48">
         <span>shakepay.stats</span>
         <ul className="flex items-center ml-4">
           <li>about</li>
         </ul>
       </nav>
-      <div className="grid grid-cols-2 gap-x-2">
+      <div className="flex-grow flex flex-col">
         <header>
           <h1 className="text-3xl mb-2">What's my BTC worth on shakepay</h1>
           <p>
@@ -87,9 +116,12 @@ export default function Home() {
           method="post"
           action="/api/csv"
           onSubmit={handleSubmit}
-          className="flex flex-col"
+          className="flex flex-col mt-8 flex-grow"
         >
-          <label
+          <div className="border-dashed border-2 border-gray-200 p-6 h-full">
+            <Dropzone onDrop={onDrop} />
+          </div>
+          {/* <label
             className="border-dashed border-2 border-gray-200 p-6 cursor-pointer flex-grow"
             htmlFor="input-upload"
           >
@@ -110,7 +142,7 @@ export default function Home() {
                 )
               )}
             </span>
-          </label>
+          </label> */}
           <input
             id="input-upload"
             type="file"
@@ -124,7 +156,7 @@ export default function Home() {
               type="submit"
               className="bg-green-300 px-4 py-1 rounded text-black self-center w-full mt-4"
             >
-              Submit
+              Upload
             </button>
           )}
         </form>
