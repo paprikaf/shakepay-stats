@@ -102,7 +102,7 @@ const Dropzone: React.FC = ({ onDrop, accept }) => {
   return (
     <div
       {...getRootProps()}
-      className="h-full flex items-center justify-center cursor-pointer"
+      className="flex items-center justify-center cursor-pointer h-full p-8"
     >
       <input className="" {...getInputProps()} />
       {isDragActive ? (
@@ -175,11 +175,12 @@ export default function Home() {
           onSubmit={handleSubmit}
           className="flex flex-col mt-8 flex-grow"
         >
-          <div className="border-dashed border-2 border-gray-200 p-6 h-full flex flex-col items-center justify-center">
+          <div className="border-dashed border-2 border-gray-200 flex-grow flex flex-col justify-center">
             {pipe(
               file,
               O.map((f) => (
-                <>
+                // TODO: remove key this is a false positive because eslint thinks we're calling array.map lol
+                <div className="flex justify-center" key="lol">
                   <div className="flex flex-col relative">
                     <div className="bg-blue-200 py-4 px-2 rounded">
                       <button
@@ -199,7 +200,7 @@ export default function Home() {
                       Upload
                     </button>
                   </div>
-                </>
+                </div>
               )),
               O.getOrElse(() => <Dropzone onDrop={onDrop} />)
             )}
