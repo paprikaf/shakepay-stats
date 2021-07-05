@@ -2,16 +2,13 @@ import * as A from "fp-ts/Array";
 import * as Csv from "lib/Csv";
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
-import * as R from "fp-ts/Record";
 import * as TE from "fp-ts/TaskEither";
 
-import { DropzoneOptions, useDropzone } from "react-dropzone";
-
-import Head from "next/head";
-import Image from "next/image";
 import React from "react";
+import classnames from "classnames";
 import { pipe } from "fp-ts/function";
-import styles from "../styles/Home.module.css";
+import styles from "./Home.module.css";
+import { useDropzone } from "react-dropzone";
 
 const upload = (file: File) =>
   TE.tryCatch(
@@ -26,6 +23,58 @@ const upload = (file: File) =>
     },
     (_) => new Error("Upload failed")
   );
+
+const Credits: React.FC = () => {
+  const [show, setShow] = React.useState(false);
+  const [ref, setRef] = React.useState<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const handleOutsideClick = (event: Event) => {
+      if (ref !== null && ref.contains(event.target as Node) === false) {
+        setShow(false);
+      }
+    };
+
+    if (show) {
+      document.addEventListener("click", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [show, ref]);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className="underline text-gray-400 mt-4 text-sm"
+        onClick={() => setShow(true)}
+      >
+        Learn how your data is being handled
+      </button>
+      {show && (
+        <div
+          ref={setRef}
+          className={classnames(
+            "absolute w-64 bg-blue-200 p-4 rounded",
+            styles.creditsTooltip
+          )}
+          style={{
+            left: -10,
+            bottom: 30,
+          }}
+        >
+          <p>
+            Your CSV file is processed on our server but we do not store it. We
+            simply use the data to compute the stats we're showing you.{" "}
+            <span className="underline">Nothing is persisted.</span>
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const FileIcon: React.FC = () => (
   <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width={120}>
@@ -93,25 +142,13 @@ export default function Home() {
     )();
   };
 
-  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (
-    event
-  ) => {
-    pipe(
-      O.fromNullable(event.target.files),
-      O.chainNullableK((files) => files.item(0)),
-      O.map((file) => {
-        setFile(O.some(file));
-      })
-    );
-  };
-
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     pipe(acceptedFiles, A.head, setFile);
   }, []);
 
   return (
-    <div className="py-6 px-12 flex flex-col h-screen">
-      <nav className="flex items-center justify-between mb-48">
+    <div className="py-6 px-6 md:px-12 flex flex-col h-screen">
+      <nav className="flex items-center justify-between mb-12 md:mb-48">
         <span>shakepay.stats</span>
         <ul className="flex items-center ml-4">
           <li>about</li>
@@ -167,9 +204,7 @@ export default function Home() {
               O.getOrElse(() => <Dropzone onDrop={onDrop} />)
             )}
           </div>
-          <a className="underline text-gray-400 mt-4 text-sm">
-            Learn how your data is being handled
-          </a>
+          <Credits />
         </form>
       </div>
     </div>

@@ -1,0 +1,11 @@
+.creditsTooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+
+  border-top: 8px solid rgba(191, 219, 254, 1);
+}
