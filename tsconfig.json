@@ -2,6 +2,11 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "noImplicitAny": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,7 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "server/*": ["./server/*"],
-      "lib/*": ["./lib/*"],
+      "lib/*": ["./lib/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

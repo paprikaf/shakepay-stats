@@ -4,11 +4,12 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 
+import { DropzoneOptions, useDropzone } from "react-dropzone";
+
 import React from "react";
 import classnames from "classnames";
 import { pipe } from "fp-ts/function";
 import styles from "./Home.module.css";
-import { useDropzone } from "react-dropzone";
 
 const upload = (file: File) =>
   TE.tryCatch(
@@ -93,7 +94,7 @@ const FileIcon: React.FC = () => (
   </svg>
 );
 
-const Dropzone: React.FC = ({ onDrop, accept }) => {
+const Dropzone: React.FC<Pick<DropzoneOptions, "onDrop">> = ({ onDrop }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: "text/csv",
