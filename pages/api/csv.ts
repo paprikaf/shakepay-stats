@@ -23,7 +23,7 @@ const readFile = (fileName: string) =>
   TE.tryCatch(
     () => {
       return new Promise((resolve, reject) => {
-        const stream: any[] = [];
+        const stream: unknown[] = [];
 
         fs.createReadStream(fileName)
           .pipe(csv())
