@@ -16,7 +16,7 @@ import multer from "multer";
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
     codec.decode,
-    E.mapLeft((errors) => Errors.Upload.DecodeError({ value: { errors } }))
+    E.mapLeft((errors) => Errors.APIUpload.DecodeError({ value: { errors } }))
   );
 
 const readFile = (fileName: string) =>
@@ -34,7 +34,7 @@ const readFile = (fileName: string) =>
           });
       });
     },
-    (_) => Errors.Upload.CsvParseError({})
+    (_) => Errors.APIUpload.CsvParseError({})
   );
 
 const Upload = t.type(
@@ -76,7 +76,7 @@ handler.use(
 handler.post<{ file?: unknown }>((request, response) => {
   const sendResponse = pipe(
     request.file,
-    E.fromNullable(Errors.Upload.NoFile({})),
+    E.fromNullable(Errors.APIUpload.NoFile({})),
     TE.fromEither,
     TE.chainEitherK(validate(Upload)),
     TE.chain((file) => readFile(file.path)),

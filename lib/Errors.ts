@@ -1,6 +1,8 @@
 import * as t from "lib/io-ts";
 
-export const UploadT = t.createTaggedUnion([
+import { StatusCodes } from "http-status-codes";
+
+export const APIUploadT = t.createTaggedUnion([
   t.taggedUnionMember(
     "DecodeError",
     t.type(
@@ -14,5 +16,33 @@ export const UploadT = t.createTaggedUnion([
   t.taggedUnionMember("CsvParseError"),
 ]);
 
-export const Upload = t.createStructuredTaggedUnion(UploadT);
-export type Upload = t.TypeOf<typeof UploadT>;
+export const APIUpload = t.createStructuredTaggedUnion(APIUploadT);
+export type APIUpload = t.TypeOf<typeof APIUploadT>;
+
+export const APIError = t.type(
+  {
+    status: t.stringEnum(StatusCodes, "StatusCodes"),
+    error: t.string,
+  },
+  "APIError"
+);
+
+export interface APIError extends t.TypeOf<typeof APIError> {}
+
+export const NetworkErrorT = t.createTaggedUnion([
+  t.taggedUnionMember(
+    "FetchError",
+    t.type({ error: t.assertion<TypeError>() })
+  ),
+  t.taggedUnionMember(APIError.name, APIError),
+  t.taggedUnionMember(
+    "UnknownAPIError",
+    t.type({
+      error: t.string,
+    })
+  ),
+]);
+
+export type NetworkErrorT = t.TypeOf<typeof NetworkErrorT>;
+
+export const NetworkError = t.createStructuredTaggedUnion(NetworkErrorT);

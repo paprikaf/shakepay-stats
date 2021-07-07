@@ -1,17 +1,27 @@
 import * as A from "fp-ts/Array";
+import * as Apply from "fp-ts/Apply";
 import * as Csv from "lib/Csv";
 import * as E from "fp-ts/Either";
+import * as Errors from "lib/Errors";
 import * as O from "fp-ts/Option";
+import * as RemoteData from "@devexperts/remote-data-ts";
 import * as TE from "fp-ts/TaskEither";
+import * as t from "lib/io-ts";
 
 import { DropzoneOptions, useDropzone } from "react-dropzone";
+import { identity, pipe } from "fp-ts/function";
 
 import React from "react";
 import classnames from "classnames";
-import { pipe } from "fp-ts/function";
 import styles from "./Home.module.css";
 
-const upload = (file: File) =>
+type UploadRemoteData = RemoteData.RemoteData<
+  Errors.NetworkErrorT,
+  // TODO: update unknown once we know the shape of the response
+  unknown
+>;
+
+const upload = (file: File): TE.TaskEither<Errors.NetworkErrorT, Response> =>
   TE.tryCatch(
     () => {
       const data = new FormData();
@@ -22,7 +32,12 @@ const upload = (file: File) =>
         body: data,
       });
     },
-    (_) => new Error("Upload failed")
+    (error) =>
+      error instanceof TypeError
+        ? Errors.NetworkError.FetchError({ value: { error } })
+        : Errors.NetworkError.UnknownAPIError({
+            value: { error: "Unknown error occurred" },
+          })
   );
 
 const Credits: React.FC = () => {
@@ -119,27 +134,34 @@ const Dropzone: React.FC<Pick<DropzoneOptions, "onDrop">> = ({ onDrop }) => {
 
 export default function Home() {
   const [file, setFile] = React.useState<O.Option<File>>(O.none);
+  const [request, setRequest] = React.useState<UploadRemoteData>(
+    RemoteData.initial
+  );
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
-    // TODO: handle error in UI
+    setRequest(RemoteData.pending);
+
     pipe(
       file,
-      TE.fromOption(() => new Error("No file provided")),
+      O.fold(() => {
+        throw new Error("Expected to have a file");
+      }, identity),
+      TE.of,
       TE.chain(upload),
-      TE.chainEitherK((response) =>
-        response.ok ? E.right(response) : E.left(new Error("Upload failed"))
-      ),
       TE.chain((response) =>
-        TE.tryCatch(
-          response.json,
-          (_) => new Error("Could parse response as json")
+        TE.tryCatch(response.json, (_error) =>
+          Errors.NetworkError.UnknownAPIError({
+            value: { error: "Could not decode response as json" },
+          })
         )
       ),
-      // TODO: We're going to eventually receive some other response for which we'll need a type.
-      TE.map((body) => body as Csv.Csv),
-      TE.map(console.log)
+      // TODO: decode whenever the shape is known
+      // We use unknown here because the standard DOM types are hardcoding `any`...
+      TE.map((response: unknown) => response),
+      TE.map((body) => setRequest(RemoteData.success(body))),
+      TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
 
@@ -196,7 +218,8 @@ export default function Home() {
                     </div>
                     <button
                       type="submit"
-                      className="bg-green-300 px-4 py-1 rounded text-black self-center mt-4 w-full"
+                      className="bg-green-300 px-4 py-1 rounded text-black self-center mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={RemoteData.isPending(request)}
                     >
                       Upload
                     </button>
