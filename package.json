@@ -10,6 +10,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@devexperts/remote-data-ts": "^2.0.5",
     "@netlify/plugin-nextjs": "^3.4.2",
     "@types/multer": "^1.4.6",
     "classnames": "^2.3.1",
