@@ -203,6 +203,7 @@ export default function Home() {
               file,
               O.map((f) => (
                 // TODO: remove key this is a false positive because eslint thinks we're calling array.map lol
+                // TODO: we need some error UI here
                 <div className="flex justify-center" key="lol">
                   <div className="flex flex-col relative">
                     <div className="bg-blue-200 py-4 px-2 rounded">
