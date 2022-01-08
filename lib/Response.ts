@@ -16,4 +16,8 @@ export const fromUploadError = Error.APIUpload.match<Error.APIError>({
     status: StatusCodes.BAD_REQUEST,
     error: "File not found",
   }),
+  ThirdPartyApiError: ({ value }) => ({
+    status: StatusCodes.INTERNAL_SERVER_ERROR,
+    error: value,
+  })
 });

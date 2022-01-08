@@ -13,6 +13,8 @@ import csv from "csv-parser";
 import fs from "fs";
 import multer from "multer";
 
+import { stats } from './stats'
+
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
     codec.decode,
@@ -24,7 +26,6 @@ const readFile = (fileName: string) =>
     () => {
       return new Promise((resolve, reject) => {
         const stream: unknown[] = [];
-
         fs.createReadStream(fileName)
           .pipe(csv())
           .on("data", (data) => stream.push(data))
@@ -51,9 +52,12 @@ const Upload = t.type(
   "Upload"
 );
 
-interface Upload extends t.TypeOf<typeof Upload> {}
 
-const handler = connect({
+
+
+interface Upload extends t.TypeOf<typeof Upload> { }
+
+export const handler = connect({
   onNoMatch: (
     _request: Next.NextApiRequest,
     response: Next.NextApiResponse<unknown>
@@ -75,6 +79,7 @@ handler.use(
  */
 handler.post<{ file?: unknown }>((request, response) => {
   const sendResponse = pipe(
+<<<<<<< Updated upstream
     request.file,
     E.fromNullable(Errors.APIUpload.NoFile({})),
     TE.fromEither,
@@ -82,14 +87,24 @@ handler.post<{ file?: unknown }>((request, response) => {
     TE.chain((file) => readFile(file.path)),
     TE.chainEitherK(validate(t.array(Csv.CsvT))),
     TE.mapLeft(
+=======
+    request.file, //file metadata
+    E.fromNullable(Errors.APIUpload.NoFile({})), //checkes if there is a file
+    TE.fromEither, //??
+    TE.chainEitherK(validate(Upload)), //validate file format ?
+    TE.chain((file) => readFile(file.path)), //  read file return the record? [result]
+    TE.chainEitherK(validate(t.array(Csv.CsvT))), // validate record
+    TE.chain(stats),
+    TE.mapLeft( //in case of error  
+>>>>>>> Stashed changes
       flow(Response.fromUploadError, (descriptor) => {
         response.status(descriptor.status).json(descriptor);
       })
     ),
-    TE.map(response.json)
+    TE.map(response.json), // return record
   );
 
-  sendResponse();
+  sendResponse(); //excute 
 });
 
 export default handler;

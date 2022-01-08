@@ -14,6 +14,7 @@ export const APIUploadT = t.createTaggedUnion([
   ),
   t.taggedUnionMember("NoFile"),
   t.taggedUnionMember("CsvParseError"),
+  t.taggedUnionMember("ThirdPartyApiError", t.string),
 ]);
 
 export const APIUpload = t.createStructuredTaggedUnion(APIUploadT);
@@ -26,7 +27,6 @@ export const APIError = t.type(
   },
   "APIError"
 );
-
 export interface APIError extends t.TypeOf<typeof APIError> {}
 
 export const NetworkErrorT = t.createTaggedUnion([
@@ -43,6 +43,6 @@ export const NetworkErrorT = t.createTaggedUnion([
   ),
 ]);
 
-export type NetworkErrorT = t.TypeOf<typeof NetworkErrorT>;
+export type NetworkError = t.TypeOf<typeof NetworkErrorT>;
 
 export const NetworkError = t.createStructuredTaggedUnion(NetworkErrorT);

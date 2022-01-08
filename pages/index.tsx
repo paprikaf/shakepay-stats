@@ -15,18 +15,20 @@ import React from "react";
 import classnames from "classnames";
 import styles from "./Home.module.css";
 
+
 type UploadRemoteData = RemoteData.RemoteData<
-  Errors.NetworkErrorT,
+  Errors.NetworkError,
   // TODO: update unknown once we know the shape of the response
   unknown
 >;
 
-const upload = (file: File): TE.TaskEither<Errors.NetworkErrorT, Response> =>
+
+
+const upload = (file: File): TE.TaskEither<Errors.NetworkError, Response> =>
   TE.tryCatch(
     () => {
       const data = new FormData();
       data.append(Csv.fieldName, file);
-
       return fetch("/api/csv", {
         method: "POST",
         body: data,
@@ -137,6 +139,7 @@ export default function Home() {
   const [request, setRequest] = React.useState<UploadRemoteData>(
     RemoteData.initial
   );
+
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();

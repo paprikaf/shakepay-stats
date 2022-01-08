@@ -172,4 +172,8 @@ export const assertion = <T>() =>
   );
 
 export * from "io-ts";
+<<<<<<< Updated upstream
 export * from "io-ts-types";
+=======
+export * from "io-ts-types";
+>>>>>>> Stashed changes
