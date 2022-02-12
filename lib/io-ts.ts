@@ -171,9 +171,5 @@ export const assertion = <T>() =>
     identity
   );
 
-export * from "io-ts";
-<<<<<<< Updated upstream
-export * from "io-ts-types";
-=======
-export * from "io-ts-types";
->>>>>>> Stashed changes
+  export * from "io-ts";
+  export * from "io-ts-types";

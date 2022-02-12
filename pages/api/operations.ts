@@ -29,7 +29,7 @@ export const getCollection = (description: string) => (collection: Array<Csv>) =
             date : rec["Date"]
         }
 
-        console.log(filtedRec);
+        // console.log(filtedRec);
         return rec[description];
     })
 const getDebitCollection = (csv: Array<Csv>): Array<number> => {

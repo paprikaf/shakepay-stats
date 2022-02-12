@@ -36,3 +36,4 @@ yarn-error.log*
 # File uploads
 tmp/
 jq/
+.vscode/launch.json

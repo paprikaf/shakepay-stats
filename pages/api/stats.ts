@@ -6,7 +6,6 @@ import * as Operations from './operations';
 import * as BtcOperations from './btcOperations';
 import * as A from "fp-ts/Array";
 
-// TODO: calculate the total of transactions by type.
 export const stats = (csvItems: Array<Csv>): TE.TaskEither<Errors.APIUpload, {
   [_x in TransactionType]: number;
 }> => {
@@ -75,37 +74,37 @@ export const stats = (csvItems: Array<Csv>): TE.TaskEither<Errors.APIUpload, {
 
 
 
-        const purchase = pipe (csvItems,
-          Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
-          Operations.getAmountDebitedPurchasedOrSale(DirectionType.Purchase),
-          Operations.getCollection('Amount Debited'),
-          Operations.getSum,
-          )
+        // const purchase = pipe (csvItems,
+        //   Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
+        //   Operations.getAmountDebitedPurchasedOrSale(DirectionType.Purchase),
+        //   Operations.getCollection('Amount Debited'),
+        //   Operations.getSum,
+        //   )
 
-        const sale = pipe(csvItems, 
-          Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
-          Operations.getAmountDebitedPurchasedOrSale(DirectionType.Sale),
-          Operations.getCollectionDate('Amount Debited'),
-          Operations.getSum,
-          Operations.convertBTCToCAD(btcPriceInCAD)
-          )
+        // const sale = pipe(csvItems, 
+        //   Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
+        //   Operations.getAmountDebitedPurchasedOrSale(DirectionType.Sale),
+        //   Operations.getCollectionDate('Amount Debited'),
+        //   Operations.getSum,
+        //   Operations.convertBTCToCAD(btcPriceInCAD)
+        //   )
 
-        console.log('Amount Debited purchase', purchase);
-        console.log('Amount Debited sale', sale);
+        // console.log('Amount Debited purchase', purchase);
+        // console.log('Amount Debited sale', sale);
 
         // const AmountLeft = purchase - sale
         // console.log(AmountLeft);
 
-        console.log(
-        'PurchaseOrSale:', purchaseSum,
-        'FiatFunding:', fiatFundingSum,
-        'ShakingSats:', shakingSatsSum,
-        'CryptoFunding: ', cryptoFundingSum,
-        'PeerTransfer:', peerTransferSum,
-        'FiatCashout:', fiatCashoutSum,
-        'CryptoCashout:', cryptoCashoutSum,
-        'Other:', otherSum,
-        )
+        // console.log(
+        // 'PurchaseOrSale:', purchaseSum,
+        // 'FiatFunding:', fiatFundingSum,
+        // 'ShakingSats:', shakingSatsSum,
+        // 'CryptoFunding: ', cryptoFundingSum,
+        // 'PeerTransfer:', peerTransferSum,
+        // 'FiatCashout:', fiatCashoutSum,
+        // 'CryptoCashout:', cryptoCashoutSum,
+        // 'Other:', otherSum,
+        // )
 
       return {
         [TransactionType.PurchaseOrSale]: purchaseSum,
@@ -123,17 +122,23 @@ export const stats = (csvItems: Array<Csv>): TE.TaskEither<Errors.APIUpload, {
 }
 
 
-const amount = pipe(
-   TE.map(stats,
-    )
-)
 
-//TODO: caluclate The spread using total of fiat funding (cad) converted to (btc by day price) than compare it to your sum total (btc and cad using the spread).
-const ShakePaySpread = () => {
-  //TODO:1 - we need the fiat funding to btc price in that day.
-  //TODO:2 -we need shakepay btc total.
 
-  //TODO: calculate spread:  avg spread =  2/1
 
-  return;
-}
+
+
+
+
+
+
+
+
+// //TODO: caluclate The spread using total of fiat funding (cad) converted to (btc by day price) than compare it to your sum total (btc and cad using the spread).
+// const ShakePaySpread = () => {
+//   //TODO:1 - we need the fiat funding to btc price in that day.
+//   //TODO:2 -we need shakepay btc total.
+
+//   //TODO: calculate spread:  avg spread =  2/1
+
+//   return;
+// }
