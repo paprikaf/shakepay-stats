@@ -1,7 +1,7 @@
 import * as Error from "lib/Errors";
 
 import { StatusCodes } from "http-status-codes";
-import { failure as formatValidationErrors } from "io-ts/PathReporter";
+import { formatValidationErrors } from "io-ts-reporters";
 
 export const fromUploadError = Error.APIUpload.match<Error.APIError>({
   CsvParseError: () => ({
@@ -10,7 +10,7 @@ export const fromUploadError = Error.APIUpload.match<Error.APIError>({
   }),
   DecodeError: ({ value }) => ({
     status: StatusCodes.BAD_REQUEST,
-    error: "Invalid file: " + formatValidationErrors(value.errors).join("; "),
+    error: "Invalid file: " + formatValidationErrors(value.errors).join("\n"),
   }),
   NoFile: () => ({
     status: StatusCodes.BAD_REQUEST,

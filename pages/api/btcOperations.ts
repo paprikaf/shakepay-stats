@@ -3,15 +3,14 @@ import * as E from "fp-ts/Either";
 import * as A from "fp-ts/Array";
 import * as t from "lib/io-ts";
 import * as TE from "fp-ts/TaskEither";
-import * as D from "io-ts/Decoder";
 import {
   btcPayloadDecoder,
   rateCADUSDDecoder,
   currentBTCUSDDecoder,
 } from "lib/BtcDecod";
-import { failure } from "io-ts/lib/PathReporter";
 import * as Apply from "fp-ts/lib/Apply";
 import * as Errors from "lib/Errors";
+import { formatValidationErrors } from "io-ts-reporters";
 
 export function convertTodayDate(): { start: string; end: string } {
   const today = new Date();
@@ -50,30 +49,6 @@ export const HistoricalBtcPriceURL = (date: string) => {
   return URL;
 };
 
-// export function makeRequest<A>(
-//   url: string,
-//   decoder: t.Decoder<unknown, A>,
-//   signal?: AbortSignal,
-// ): TE.TaskEither<Error, A> {
-//   return TE.tryCatch(
-//     async () => {
-//       const response = await fetch(url, { signal })
-//       const result = await response.json()
-//       const decoded = decoder.decode(result)
-//       if (E.isLeft(decoded)) {
-//         throw new TypeError(t.draw(decoded.left))
-//       }
-//       return decoded.right
-//     },
-//     (error) =>
-//       error instanceof Error
-//         ? error
-//         : new Error(JSON.stringify(error)),
-//   );
-// }
-
-// const fetchBtcPriceRequest = makeRequest(TodayBtcPriceURL(), btcPayloadDecoder)
-
 const currentExchangeRateURL: string =
   "https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=1";
 
@@ -83,7 +58,7 @@ const currentUSDBTCpriceURL: string =
 const decodeWith = <A>(decoder: t.Decoder<unknown, A>) =>
   flow(
     decoder.decode,
-    E.mapLeft((errors) => new Error(failure(errors).join("\n"))),
+    E.mapLeft((errors) => new Error(formatValidationErrors(errors).join("\n"))),
     TE.fromEither
   );
 
@@ -102,8 +77,6 @@ const currentExchangeRate = pipe(
   currentExchangeRateURL,
   getFromURL(rateCADUSDDecoder),
   TE.map((x) => x.observations),
-  // TE.map(A.head), //gets the first value of an array
-  // TE.chainEitherK(E.fromOption(() => new Error("Observations array was empty"))),
   TE.chainOptionK(() => new Error("Observations Array was empty"))(A.head),
   TE.map((a) => a.FXUSDCAD.v)
 );

@@ -17,9 +17,7 @@ import styles from "./Home.module.css";
 
 type UploadRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
-  Csv.CsvResponse
-  // TODO: update unknown once we know the shape of the response
-  // unknown
+  Csv.Response
 >;
 
 const upload = (file: File): TE.TaskEither<Errors.NetworkError, Response> =>
@@ -176,7 +174,7 @@ export default function Home() {
       ),
       // TODO: decode whenever the shape is known
       // We use unknown here because the standard DOM types are hardcoding `any`...
-      TE.map((body: Csv.CsvResponse) => setRequest(RemoteData.success(body))),
+      TE.map((body: Csv.Response) => setRequest(RemoteData.success(body))),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
