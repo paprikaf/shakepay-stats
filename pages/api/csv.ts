@@ -13,7 +13,7 @@ import csv from "csv-parser";
 import fs from "fs";
 import multer from "multer";
 
-import { stats } from './stats'
+import { stats } from "./stats";
 
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
@@ -52,10 +52,7 @@ const Upload = t.type(
   "Upload"
 );
 
-
-
-
-interface Upload extends t.TypeOf<typeof Upload> { }
+interface Upload extends t.TypeOf<typeof Upload> {}
 
 export const handler = connect({
   onNoMatch: (
@@ -77,7 +74,7 @@ handler.use(
  * We have to specify that the request holds a potential uploaded file.
  * To be safe, we can't assume its type until we decode it, similar to how we should be decoding a request body.
  */
- handler.post<{ file?: unknown /*unkown*/ }>((request, response) => {
+handler.post<{ file?: unknown /*unkown*/ }>((request, response) => {
   const sendResponse = pipe(
     request.file, //file metadata
     E.fromNullable(Errors.APIUpload.NoFile({})), //checkes if there is a file
@@ -86,15 +83,16 @@ handler.use(
     TE.chain((file) => readFile(file.path)), //  read file return the record? [result]
     TE.chainEitherK(validate(t.array(Csv.CsvT))), // validate record
     TE.chain(stats),
-    TE.mapLeft( //in case of error  
+    TE.mapLeft(
+      //in case of error
       flow(Response.fromUploadError, (descriptor) => {
         response.status(descriptor.status).json(descriptor);
       })
     ),
-    TE.map(response.json), // return record
+    TE.map(response.json) // return record
   );
 
-  sendResponse(); //excute 
+  sendResponse(); //excute
 });
 
 export default handler;

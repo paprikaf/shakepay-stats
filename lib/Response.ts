@@ -19,5 +19,5 @@ export const fromUploadError = Error.APIUpload.match<Error.APIError>({
   ThirdPartyApiError: ({ value }) => ({
     status: StatusCodes.INTERNAL_SERVER_ERROR,
     error: value,
-  })
+  }),
 });
