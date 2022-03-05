@@ -373,7 +373,7 @@ export type Csv = t.TypeOf<typeof CsvT>;
 export const Csv = t.createStructuredTaggedUnion(CsvT);
 
 
-export const CsvResponseT = t.type(
+export const ResponseT = t.type(
 {
   "crypto cashout": t.number,
   "crypto funding": t.number,
@@ -386,4 +386,4 @@ export const CsvResponseT = t.type(
 
 })
 
-export type CsvResponse = t.TypeOf<typeof CsvResponseT>
+export type Response = t.TypeOf<typeof ResponseT>

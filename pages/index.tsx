@@ -15,14 +15,10 @@ import React from "react";
 import classnames from "classnames";
 import styles from "./Home.module.css";
 
-
 type UploadRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
-  Csv.CsvResponse
-  // TODO: update unknown once we know the shape of the response
-  // unknown
+  Csv.Response
 >;
-
 
 const upload = (file: File): TE.TaskEither<Errors.NetworkError, Response> =>
   TE.tryCatch(
