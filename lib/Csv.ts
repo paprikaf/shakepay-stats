@@ -2,14 +2,13 @@ import { pipe } from "fp-ts/lib/function";
 import * as t from "lib/io-ts";
 import * as E from "fp-ts/lib/Either";
 
-
 const NumberFromStringOrEmptyString = new t.Type<number, string, unknown>(
   "NumberFromEmptyString",
   t.number.is,
   (u, c) =>
     pipe(
       t.NumberFromString.validate(u, c),
-      E.orElse( e => {
+      E.orElse((e) => {
         return pipe(
           t.string.validate(u, c),
           E.chain((a) => {
@@ -21,8 +20,9 @@ const NumberFromStringOrEmptyString = new t.Type<number, string, unknown>(
   String
 );
 
-
-type NumberFromStringOrEmptyStringC = t.TypeOf <typeof NumberFromStringOrEmptyString>
+type NumberFromStringOrEmptyStringC = t.TypeOf<
+  typeof NumberFromStringOrEmptyString
+>;
 
 export const fieldName = "csv_file";
 export enum TransactionType {
@@ -37,13 +37,13 @@ export enum TransactionType {
 }
 
 export enum DirectionType {
-  Purchase = 'purchase',
-  Sale = 'sale'
+  Purchase = "purchase",
+  Sale = "sale",
 }
 
 export enum CreditDebitType {
-  Debit = 'Amount Debited',
-  Credit = 'Amount Credited'
+  Debit = "Amount Debited",
+  Credit = "Amount Credited",
 }
 
 // {
@@ -191,7 +191,6 @@ const CryptoFunding = t.type(
 //   "Blockchain Transaction ID": ""
 // },
 
-
 // const PeerTransfer = t.intersection([
 //   t.type({ type: t.literal('PeerTransfer') }),
 //   t.union([
@@ -205,7 +204,7 @@ const CryptoFunding = t.type(
 //     }),
 //   ]),
 // ]);
-const EmptyString = t.literal('');
+const EmptyString = t.literal("");
 // const PeerTransfer = t.type(
 //   {
 //     Date: t.string,
@@ -218,30 +217,30 @@ const EmptyString = t.literal('');
 //   },
 //   "PeerTransfer"
 // );
-const PeerTransfer = t.intersection([
-  t.type({
-    Date: t.string, 
-    "Source / Destination": t.string,
-    "Amount Credited": NumberFromStringOrEmptyString,
-    "Amount Debited": NumberFromStringOrEmptyString,
-  }),
-  t.union([
-        t.type({
-          Direction:  t.literal("debit"),
-          "Credit Currency": EmptyString,
-          "Debit Currency": t.string,
-         
-        }),
-        t.type({
-          Date: t.string,
-          Direction: t.literal("credit"),
-          "Credit Currency": t.string,
-          "Debit Currency": EmptyString,
-        }),
-      ]),     
+const PeerTransfer = t.intersection(
+  [
+    t.type({
+      Date: t.string,
+      "Source / Destination": t.string,
+      "Amount Credited": NumberFromStringOrEmptyString,
+      "Amount Debited": NumberFromStringOrEmptyString,
+    }),
+    t.union([
+      t.type({
+        Direction: t.literal("debit"),
+        "Credit Currency": EmptyString,
+        "Debit Currency": t.string,
+      }),
+      t.type({
+        Date: t.string,
+        Direction: t.literal("credit"),
+        "Credit Currency": t.string,
+        "Debit Currency": EmptyString,
+      }),
+    ]),
   ],
   "PeerTransfer"
-  )
+);
 
 // {
 //   "Transaction Type": "fiat cashout",
@@ -318,7 +317,7 @@ const Other = t.type(
   },
   "Other"
 );
- 
+
 // TODO: Fix io-ts/lib to allow any property as discriminant
 const createTaggedUnion = <T extends string, C extends t.Mixed>(
   tag: T,
@@ -330,7 +329,10 @@ const createTaggedUnion = <T extends string, C extends t.Mixed>(
   ]);
 };
 
-export const PurchaseOrSaleMember = createTaggedUnion("purchase/sale", PurchaseOrSale);
+export const PurchaseOrSaleMember = createTaggedUnion(
+  "purchase/sale",
+  PurchaseOrSale
+);
 export type PurchaseOrSaleMember = t.TypeOf<typeof PurchaseOrSaleMember>;
 export const FiatFundingMember = createTaggedUnion("fiat funding", FiatFunding);
 export type FiatFundingMember = t.TypeOf<typeof FiatFundingMember>;
@@ -366,24 +368,29 @@ export const CsvT = t.taggedUnion("Transaction Type", [
   CryptoCashoutMember,
   OtherMember,
 ]);
-export type SingleMember =   PurchaseOrSaleMember | FiatFundingMember | ShakingStatsMember | CryptoFundingMember | PeerTransferMember | FiatCashoutMember | CryptoCashoutMember | OtherMember;
+export type SingleMember =
+  | PurchaseOrSaleMember
+  | FiatFundingMember
+  | ShakingStatsMember
+  | CryptoFundingMember
+  | PeerTransferMember
+  | FiatCashoutMember
+  | CryptoCashoutMember
+  | OtherMember;
 
 export type Csv = t.TypeOf<typeof CsvT>;
 
 export const Csv = t.createStructuredTaggedUnion(CsvT);
 
-
-export const CsvResponseT = t.type(
-{
+export const CsvResponseT = t.type({
   "crypto cashout": t.number,
   "crypto funding": t.number,
   "fiat cashout": t.number,
   "fiat funding": t.number,
-  "other": t.number,
+  other: t.number,
   "peer transfer": t.number,
   "purchase/sale": t.number,
-  "shakingsats": t.number,
+  shakingsats: t.number,
+});
 
-})
-
-export type CsvResponse = t.TypeOf<typeof CsvResponseT>
+export type CsvResponse = t.TypeOf<typeof CsvResponseT>;

@@ -32,11 +32,9 @@ export type TaggedUnionMember<
 
 export type TagValue<A, Tag extends keyof A> = A[Tag] & (string | number);
 
-export type Match<A extends object, Tag extends keyof A> = <R>(
-  handlers: {
-    [K in TagValue<A, Tag>]: (x: TaggedUnionMember<A, Tag, K>) => R;
-  }
-) => (a: A) => R;
+export type Match<A extends object, Tag extends keyof A> = <R>(handlers: {
+  [K in TagValue<A, Tag>]: (x: TaggedUnionMember<A, Tag, K>) => R;
+}) => (a: A) => R;
 
 export type Constructors<A extends object, Tag extends keyof A> = {
   [K in TagValue<A, Tag>]: (x: Omit<TaggedUnionMember<A, Tag, K>, Tag>) => A;
@@ -171,5 +169,5 @@ export const assertion = <T>() =>
     identity
   );
 
-  export * from "io-ts";
-  export * from "io-ts-types";
+export * from "io-ts";
+export * from "io-ts-types";

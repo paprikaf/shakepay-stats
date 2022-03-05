@@ -15,7 +15,6 @@ import React from "react";
 import classnames from "classnames";
 import styles from "./Home.module.css";
 
-
 type UploadRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
   Csv.CsvResponse
@@ -23,12 +22,11 @@ type UploadRemoteData = RemoteData.RemoteData<
   // unknown
 >;
 
-
 const upload = (file: File): TE.TaskEither<Errors.NetworkError, Response> =>
   TE.tryCatch(
     () => {
       const data = new FormData();
-      data.append(Csv.fieldName, file); 
+      data.append(Csv.fieldName, file);
       return fetch("/api/csv", {
         method: "POST",
         body: data,
@@ -134,35 +132,34 @@ const Dropzone: React.FC<Pick<DropzoneOptions, "onDrop">> = ({ onDrop }) => {
   );
 };
 //TODO: show Stats after upload
-const StatsDashBoard : React.FC = () => {
-    return (
-      <div className="flex items-center ml-4">
-        show me the stats dashboard
-        <div>
-           <p>crypto cashout: 0 </p> 
-           <p>crypto funding: 12.749708207600001</p> 
-           <p>fiat cashout: 2359</p>
-           <p>fiat funding: 5100</p>
-           <p>other: 30</p>
-           <p>peer transfer: 382.5100000000001</p>
-           <p>purchase/sale: 3103.65677336</p>
-           <p>shakingsats: 39.27028679750004</p>
-         </div>
+const StatsDashBoard: React.FC = () => {
+  return (
+    <div className="flex items-center ml-4">
+      show me the stats dashboard
+      <div>
+        <p>crypto cashout: 0 </p>
+        <p>crypto funding: 12.749708207600001</p>
+        <p>fiat cashout: 2359</p>
+        <p>fiat funding: 5100</p>
+        <p>other: 30</p>
+        <p>peer transfer: 382.5100000000001</p>
+        <p>purchase/sale: 3103.65677336</p>
+        <p>shakingsats: 39.27028679750004</p>
       </div>
-    )
-}
+    </div>
+  );
+};
 export default function Home() {
   const [file, setFile] = React.useState<O.Option<File>>(O.none);
   const [request, setRequest] = React.useState<UploadRemoteData>(
     RemoteData.initial
   );
 
-  
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     setRequest(RemoteData.pending);
 
-     pipe(
+    pipe(
       file,
       O.fold(() => {
         throw new Error("Expected to have a file");
@@ -170,19 +167,16 @@ export default function Home() {
       TE.of,
       TE.chain(upload),
 
-     TE.chain((response) => 
-        TE.tryCatch(response.json, 
-          (_error) =>
+      TE.chain((response) =>
+        TE.tryCatch(response.json, (_error) =>
           Errors.NetworkError.UnknownAPIError({
             value: { error: "Could not decode response as json" },
           })
         )
-        ),
+      ),
       // TODO: decode whenever the shape is known
       // We use unknown here because the standard DOM types are hardcoding `any`...
-      TE.map((body : Csv.CsvResponse ) => 
-        setRequest(RemoteData.success(body))
-    ),
+      TE.map((body: Csv.CsvResponse) => setRequest(RemoteData.success(body))),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
@@ -199,7 +193,7 @@ export default function Home() {
         </ul>
       </nav>
       <div className="flex-grow flex flex-col">
-      {/* <StatsDashBoard /> */}
+        {/* <StatsDashBoard /> */}
         <header>
           <h1 className="text-4xl mb-2">
             Learn what's your BTC worth on shakepay
@@ -226,7 +220,7 @@ export default function Home() {
               O.map((f) => (
                 // TODO: remove key this is a false positive because eslint thinks we're calling array.map lol
                 // TODO: we need some error UI here
-                <div className="flex justify-center"  key="lol">
+                <div className="flex justify-center" key="lol">
                   <div className="flex flex-col relative">
                     <div className="bg-blue-200 py-4 px-2 rounded">
                       <button
@@ -248,7 +242,6 @@ export default function Home() {
                     </button>
                   </div>
                 </div>
-                
               )),
               O.getOrElse(() => <Dropzone onDrop={onDrop} />)
             )}
@@ -258,5 +251,4 @@ export default function Home() {
       </div>
     </div>
   );
-  
 }
