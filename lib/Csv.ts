@@ -205,18 +205,6 @@ const CryptoFunding = t.type(
 //   ]),
 // ]);
 const EmptyString = t.literal("");
-// const PeerTransfer = t.type(
-//   {
-//     Date: t.string,
-//     "Amount Credited": NumberFromStringOrEmptyString,
-//     "Credit Currency": t.union([t.undefined, t.string]),
-//     "Amount Debited": NumberFromStringOrEmptyString,
-//     "Debit Currency": t.union([t.undefined, t.string]),
-//     Direction: t.union([t.literal("credit"), t.literal("debit")]),
-//     "Source / Destination": t.string,
-//   },
-//   "PeerTransfer"
-// );
 const PeerTransfer = t.intersection(
   [
     t.type({
@@ -318,6 +306,54 @@ const Other = t.type(
   "Other"
 );
 
+  // {
+  //   "Transaction Type": "card transactions",
+  //   "Date": "2021-12-08T17:25:04+00",
+  //   "Amount Debited": "00.00",
+  //   "Debit Currency": "CAD",
+  //   "Amount Credited": "",
+  //   "Credit Currency": "",
+  //   "Buy / Sell Rate": "",
+  //   "Direction": "debit",
+  //   "Spot Rate": "",
+  //   "Source / Destination": "PROVIDER",
+  //   "Blockchain Transaction ID": ""
+  // },
+const CardTransactions = t.type({
+  "Transaction Type": t.string,
+  Date: t.string,
+  "Amount Debited": t.string,
+  "Debit Currency": t.literal("CAD"),
+  Direction: t.union([t.literal("debit"), t.literal("credit")]),
+  "Source / Destination": t.literal("PROVIDER"),
+},
+"card transactions"
+)
+  // {
+  //   "Transaction Type": "card cashbacks",
+  //   "Date": "2021-12-10T14:30:50+00",
+  //   "Amount Debited": "",
+  //   "Debit Currency": "",
+  //   "Amount Credited": 0,
+  //   "Credit Currency": "BTC",
+  //   "Buy / Sell Rate": "",
+  //   "Direction": "credit",
+  //   "Spot Rate": 62995.7333,
+  //   "Source / Destination": "@cashbacks",
+  //   "Blockchain Transaction ID": ""
+  // }
+  const CardCashbacks = t.type({
+    "Transaction Type": t.string,
+     Date: t.string,
+     "Amount Credited": t.number,
+     "Credit Currencey": t.literal("BTC"),
+     Direction: t.union([t.literal("debit"), t.literal("credit")]),
+     "Spot Rate": t.NumberFromString,
+     "Source / Destination": t.string,
+  },
+  "card cashbacks"
+  )
+
 // TODO: Fix io-ts/lib to allow any property as discriminant
 const createTaggedUnion = <T extends string, C extends t.Mixed>(
   tag: T,
@@ -338,25 +374,20 @@ export const FiatFundingMember = createTaggedUnion("fiat funding", FiatFunding);
 export type FiatFundingMember = t.TypeOf<typeof FiatFundingMember>;
 export const ShakingStatsMember = createTaggedUnion("shakingsats", ShakingSats);
 export type ShakingStatsMember = t.TypeOf<typeof ShakingStatsMember>;
-export const CryptoFundingMember = createTaggedUnion(
-  "crypto funding",
-  CryptoFunding
-);
+export const CryptoFundingMember = createTaggedUnion("crypto funding",CryptoFunding);
 export type CryptoFundingMember = t.TypeOf<typeof CryptoFundingMember>;
-export const PeerTransferMember = createTaggedUnion(
-  "peer transfer",
-  PeerTransfer
-);
+export const PeerTransferMember = createTaggedUnion( "peer transfer",PeerTransfer);
 export type PeerTransferMember = t.TypeOf<typeof PeerTransferMember>;
 export const FiatCashoutMember = createTaggedUnion("fiat cashout", FiatCashout);
 export type FiatCashoutMember = t.TypeOf<typeof FiatCashoutMember>;
-export const CryptoCashoutMember = createTaggedUnion(
-  "crypto cashout",
-  CryptoCashout
-);
+export const CryptoCashoutMember = createTaggedUnion("crypto cashout",CryptoCashout);
 export type CryptoCashoutMember = t.TypeOf<typeof CryptoCashoutMember>;
 export const OtherMember = createTaggedUnion("other", Other);
 export type OtherMember = t.TypeOf<typeof OtherMember>;
+export const CardCashbacksMember = createTaggedUnion("card cashbacks", CardCashbacks);
+export type CardCashbacksMember = t.TypeOf<typeof CardCashbacksMember>
+export const CardTransactionsMember = createTaggedUnion("card transactions", CardTransactions);
+export type CardTransactionsMember = t.TypeOf<typeof CardTransactionsMember>
 
 export const CsvT = t.taggedUnion("Transaction Type", [
   PurchaseOrSaleMember,
@@ -366,6 +397,8 @@ export const CsvT = t.taggedUnion("Transaction Type", [
   PeerTransferMember,
   FiatCashoutMember,
   CryptoCashoutMember,
+  CardCashbacksMember,
+  CardTransactionsMember,
   OtherMember,
 ]);
 export type SingleMember =
@@ -376,6 +409,8 @@ export type SingleMember =
   | PeerTransferMember
   | FiatCashoutMember
   | CryptoCashoutMember
+  | CardCashbacksMember
+  | CardTransactionsMember
   | OtherMember;
 
 export type Csv = t.TypeOf<typeof CsvT>;

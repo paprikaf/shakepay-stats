@@ -152,11 +152,9 @@ export default function Home() {
   const [request, setRequest] = React.useState<UploadRemoteData>(
     RemoteData.initial
   );
-
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     setRequest(RemoteData.pending);
-
     pipe(
       file,
       O.fold(() => {
@@ -164,8 +162,7 @@ export default function Home() {
       }, identity),
       TE.of,
       TE.chain(upload),
-
-      TE.chain((response) =>
+      TE.chain((response) => 
         TE.tryCatch(response.json, (_error) =>
           Errors.NetworkError.UnknownAPIError({
             value: { error: "Could not decode response as json" },
