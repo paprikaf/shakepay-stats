@@ -130,19 +130,19 @@ const Dropzone: React.FC<Pick<DropzoneOptions, "onDrop">> = ({ onDrop }) => {
   );
 };
 //TODO: show Stats after upload
-const StatsDashBoard: React.FC = () => {
+const StatsDashBoard: React.FC<Csv.Response> = (props) => {
   return (
     <div className="flex items-center ml-4">
       show me the stats dashboard
-      <div>
-        <p>crypto cashout: 0 </p>
-        <p>crypto funding: 12.749708207600001</p>
-        <p>fiat cashout: 2359</p>
-        <p>fiat funding: 5100</p>
-        <p>other: 30</p>
-        <p>peer transfer: 382.5100000000001</p>
-        <p>purchase/sale: 3103.65677336</p>
-        <p>shakingsats: 39.27028679750004</p>
+      <div className="">
+        <p>crypto cashout: {props["crypto cashout"]} </p>
+        <p>crypto funding: {props["crypto funding"]}</p>
+        <p>fiat cashout: {props["fiat cashout"]}</p>
+        <p>fiat funding: {props["fiat funding"]}</p>
+        <p>other: {props["other"]}</p>
+        <p>peer transfer: {props["peer transfer"]}</p>
+        <p>purchase/sale: {props["purchase/sale"]}</p>
+        <p>shakingsats: {props["shakingsats"]}</p>
       </div>
     </div>
   );
@@ -155,6 +155,7 @@ export default function Home() {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     setRequest(RemoteData.pending);
+
     pipe(
       file,
       O.fold(() => {
@@ -162,19 +163,21 @@ export default function Home() {
       }, identity),
       TE.of,
       TE.chain(upload),
-      TE.chain((response) => 
-        TE.tryCatch(response.json, (_error) =>
-          Errors.NetworkError.UnknownAPIError({
-            value: { error: "Could not decode response as json" },
-          })
+
+      TE.chain((response) =>
+        TE.tryCatch(
+          () => response.json(),
+          (_error) =>
+            Errors.NetworkError.UnknownAPIError({
+              value: { error: "Could not decode response as json" },
+            })
         )
       ),
-      // TODO: decode whenever the shape is known
-      // We use unknown here because the standard DOM types are hardcoding `any`...
       TE.map((body: Csv.Response) => setRequest(RemoteData.success(body))),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
+  
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     pipe(acceptedFiles, A.head, setFile);
   }, []);
@@ -216,26 +219,36 @@ export default function Home() {
                 // TODO: remove key this is a false positive because eslint thinks we're calling array.map lol
                 // TODO: we need some error UI here
                 <div className="flex justify-center" key="lol">
-                  <div className="flex flex-col relative">
-                    <div className="bg-blue-200 py-4 px-2 rounded">
-                      <button
-                        type="button"
-                        className="p-2 -m-2 absolute top-0 right-2 text-2xl"
-                        onClick={() => setFile(O.none)}
-                      >
-                        &times;
-                      </button>
-                      <FileIcon />
-                      <div className="mt-2 text-center">{f.name}</div>
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-green-300 px-4 py-1 rounded text-black self-center mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                      disabled={RemoteData.isPending(request)}
-                    >
-                      Upload
-                    </button>
-                  </div>
+                  {pipe(
+                    request,
+                    RemoteData.fold(
+                      () => (
+                        <div className="flex flex-col relative">
+                          <div className="bg-blue-200 py-4 px-2 rounded">
+                            <button
+                              type="button"
+                              className="p-2 -m-2 absolute top-0 right-2 text-2xl"
+                              onClick={() => setFile(O.none)}
+                            >
+                              &times;
+                            </button>
+                            <FileIcon />
+                            <div className="mt-2 text-center">{f.name}</div>
+                          </div>
+                          <button
+                            type="submit"
+                            className="bg-green-300 px-4 py-1 rounded text-black self-center mt-4 w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={RemoteData.isPending(request)}
+                          >
+                            Upload
+                          </button>
+                        </div>
+                      ),
+                      () => <>"Fetching"</>,
+                      () => <>"shit didnt work"</>,
+                      (data) => <StatsDashBoard {...data} />
+                    )
+                  )}
                 </div>
               )),
               O.getOrElse(() => <Dropzone onDrop={onDrop} />)
