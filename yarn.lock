@@ -2610,6 +2610,11 @@ foreach@^2.0.5:
   resolved "https://registry.npmjs.org/foreach/-/foreach-2.0.5.tgz"
   integrity sha1-C+4AUBiusmDQo6865ljdATbsG5k=
 
+fp-fetch@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/fp-fetch/-/fp-fetch-0.1.1.tgz#4d643507d44e6d7072c3502c125558d1a7b84dc2"
+  integrity sha512-h91lRA+u/XJIJrrh/bFi8OF4jXK6aqC90WIBTvhgY2iIbNTb9kRsEXyMvLK4M/P415eB7wIPsdozcCgofS84Kg==
+
 fp-ts@^2.0.0, fp-ts@^2.11.5:
   version "2.11.8"
   resolved "https://registry.npmjs.org/fp-ts/-/fp-ts-2.11.8.tgz"

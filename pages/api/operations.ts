@@ -10,11 +10,8 @@ import { Refinement } from "fp-ts/Refinement";
 import * as A from "fp-ts/Array";
 import { pipe } from "fp-ts/function";
 import * as BtcOperations from "./btcOperations";
-import { btcPayloadDecoder } from "lib/BtcDecod";
 import * as Errors from "lib/Errors";
 import * as TE from "fp-ts/TaskEither";
-import * as Apply from "fp-ts/lib/Apply";
-import { number } from "fp-ts";
 
 const makeRefinment =
   <T extends SingleMember>(
@@ -111,58 +108,3 @@ export const getCollectionDate =
       // return rec[description];
       return filtedRec;
     });
-
-//   export const stats = (csvItems: Array<Csv>): TE.TaskEither<Errors.APIUpload, {
-//     [_x in TransactionType]: number;
-//   }> => {
-//       // console.log('csvItems', csvItems)
-//     return pipe(
-//       BtcOperations.currentCADBTCPrice,
-
-//       TE.mapLeft(_ =>
-//         Errors.APIUpload.ThirdPartyApiError({ value: "Could not fetch Btc price" })),
-
-//       TE.map(btcPriceInCAD => {
-//         const shakingSatsSum = pipe(csvItems,
-//           Operations.transactionTypeRecord(TransactionType.ShakingSats),
-//           Operations.getCollection('Amount Credited'),
-//           Operations.getSum,
-//           Operations.convertBTCToCAD(btcPriceInCAD)
-//         );
-
-// const getCollectionTask = (collection: Array<Csv>)  => (date: string): TE.TaskEither<Errors.APIUpload,
-//      {_x : string
-//     }> =>
-//     {
-//         return pipe(
-//             BtcOperations.getBtcPriceInCADByDate(date),
-//             TE.mapLeft(_ =>
-//                 Errors.APIUpload.ThirdPartyApiError({value: "could Not fetch BTC Price"})),
-//             TE.map( BtcPriceByDate => {
-//                   const test =  BtcPriceByDate
-//                   return test;
-//                 }
-
-//             )
-//         )
-//     }
-
-// const BtcPriceByDate = ()
-
-// export const stats = (csvItems: Array<Csv>): TE.TaskEither<Errors.APIUpload, {
-//     [_x in TransactionType]: number;
-//   }> => {
-//       // console.log('csvItems', csvItems)
-//     rreturn pipe(
-// BtcOperations.currentCADBTCPrice,
-
-// TE.mapLeft(_ =>
-//   Errors.APIUpload.ThirdPartyApiError({ value: "Could not fetch Btc price" })),
-
-// TE.map(btcPriceInCAD => {
-//   const shakingSatsSum = pipe(csvItems,
-//     Operations.transactionTypeRecord(TransactionType.ShakingSats),
-//     Operations.getCollection('Amount Credited'),
-//     Operations.getSum,
-//     Operations.convertBTCToCAD(btcPriceInCAD)
-//   );

@@ -10,7 +10,6 @@ import { pipe } from "fp-ts/function";
 import * as Errors from "lib/Errors";
 import * as Operations from "./operations";
 import * as BtcOperations from "./btcOperations";
-import * as A from "fp-ts/Array";
 
 export const stats = (
   csvItems: Array<Csv>
@@ -94,7 +93,6 @@ export const stats = (
         Operations.getCollection("Amount Credited"),
         Operations.getSum
       );
-
       // const purchase = pipe (csvItems,
       //   Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
       //   Operations.getAmountDebitedPurchasedOrSale(DirectionType.Purchase),

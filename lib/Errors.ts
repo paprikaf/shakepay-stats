@@ -34,7 +34,7 @@ export const NetworkErrorT = t.createTaggedUnion([
     "FetchError",
     t.type({ error: t.assertion<TypeError>() })
   ),
-  t.taggedUnionMember(APIError.name, APIError),
+  // t.taggedUnionMember(APIError.name, APIError),
   t.taggedUnionMember(
     "UnknownAPIError",
     t.type({

@@ -60,6 +60,19 @@ export enum CreditDebitType {
 //   "Blockchain Transaction ID": ""
 // }
 /**
+ * {
+    "Transaction Type": "purchase/sale",
+    "Date": "2022-05-13T22:46:28+00",
+    "Amount Debited": 10,
+    "Debit Currency": "CAD",
+    "Amount Credited": 0.00371925338401324,
+    "Credit Currency": "ETH",
+    "Buy / Sell Rate": 2688.7117,
+    "Direction": "purchase",
+    "Spot Rate": "",
+    "Source / Destination": "",
+    "Blockchain Transaction ID": ""
+  }
  * TODO: there is technically two subtypes here.
  * Based on whether or not we're selling or buying, the debit currency and credit currency will be different
  *
@@ -73,8 +86,8 @@ const PurchaseOrSale = t.type(
     Date: t.string,
     "Amount Debited": t.NumberFromString,
     "Amount Credited": t.NumberFromString,
-    "Debit Currency": t.union([t.literal("CAD"), t.literal("BTC")]),
-    "Credit Currency": t.union([t.literal("CAD"), t.literal("BTC")]),
+    "Debit Currency": t.union([t.literal("CAD"), t.literal("BTC"), t.literal("ETH")]),
+    "Credit Currency": t.union([t.literal("CAD"), t.literal("BTC") , t.literal("ETH")]),
     "Buy / Sell Rate": t.union([t.string, t.NumberFromString]), //sometiems there is no buy/sell rate on the CSV.
     Direction: t.union([t.literal("purchase"), t.literal("sale")]),
   },
@@ -190,7 +203,6 @@ const CryptoFunding = t.type(
 //   "Source / Destination": "@ananas",
 //   "Blockchain Transaction ID": ""
 // },
-
 // const PeerTransfer = t.intersection([
 //   t.type({ type: t.literal('PeerTransfer') }),
 //   t.union([

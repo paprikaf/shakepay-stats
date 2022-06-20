@@ -7,6 +7,7 @@ import {
   btcPayloadDecoder,
   rateCADUSDDecoder,
   currentBTCUSDDecoder,
+  shakepayRatesDecoder,
 } from "lib/BtcDecod";
 import * as Apply from "fp-ts/lib/Apply";
 import * as Errors from "lib/Errors";
@@ -36,7 +37,7 @@ export function convertCsvDate(date: string): string {
   return date;
 }
 
-export const TodayBtcPriceURL = () => {
+export const TodayBtcPriceURL = (): string => {
   const date = convertTodayDate();
   const URL: string = `https://api.coindesk.com/v1/bpi/historical/close.json?start=${date.start}&end=${date.end}&currency=CAD`;
   return URL;
@@ -45,7 +46,6 @@ export const TodayBtcPriceURL = () => {
 export const HistoricalBtcPriceURL = (date: string) => {
   const convertedDate = convertCsvDate(date);
   const URL: string = `https://api.coindesk.com/v1/bpi/historical/close.json?start=${convertedDate}&end=${convertedDate}&currency=CAD`;
-  console.log(URL);
   return URL;
 };
 
@@ -106,9 +106,6 @@ export const currentCADBTCPrice = pipe(
   //   return resultEIther;
   // }),
 );
-// const btcCADPrice = 1;
-// const btcAmount = 1;
-// const getAvgBtcPrice = btcCADPrice * btcAmount;
 
 const getAvgBtcPrice = pipe(
   currentCADBTCPrice,
@@ -129,3 +126,13 @@ export const getBtcPriceInCADByDate = (date: string) => {
     TE.map((x) => x.bpi.todayDate)
   );
 };
+
+export const shakepayRatesUrl: string = "/api/rates";
+export const liveBTCCADprice: TE.TaskEither<Errors.NetworkError, number> = pipe(
+  shakepayRatesUrl,
+  getFromURL(shakepayRatesDecoder),
+  TE.map((x) => x.BTC_CAD),
+  TE.mapLeft((_) =>
+     Errors.NetworkError.UnknownAPIError({value: {error: "could not fetch Btc Price"}})
+     )
+);

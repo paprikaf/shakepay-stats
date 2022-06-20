@@ -1,5 +1,19 @@
 import * as t from "lib/io-ts";
 import { convertTodayDate } from "pages/api/btcOperations";
+export const shakepayRatesDecoder = t.type({
+  CAD_BTC: t.number,
+  BTC_CAD: t.number,
+  CAD_ETH: t.number,
+  ETH_CAD: t.number,
+  USD_BTC: t.number,
+  BTC_USD: t.number,
+  USD_ETH: t.number,
+  ETH_USD: t.number,
+  BTC_ETH: t.number,
+  ETH_BTC: t.number,
+  CAD_USD: t.number,
+  USD_CAD: t.number
+});
 
 const timeDecoder = t.type({
   updated: t.string,
@@ -56,6 +70,8 @@ export const rateCADUSDDecoder = t.type({
   observations,
 });
 
+
 export type btcPayload = t.TypeOf<typeof btcPayloadDecoder>;
 export type rateCADUSD = t.TypeOf<typeof rateCADUSDDecoder>;
 export type currentBTCcurrencyUSD = t.TypeOf<typeof currentBTCUSDDecoder>;
+export type shakepayRates = t.TypeOf<typeof shakepayRatesDecoder>;
