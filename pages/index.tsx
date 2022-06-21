@@ -1,22 +1,19 @@
 import * as A from 'fp-ts/Array';
-import * as Apply from 'fp-ts/Apply';
 import * as Csv from 'lib/Csv';
 import * as Btc from 'pages/api/btcOperations';
-import * as E from 'fp-ts/Either';
 import * as Errors from 'lib/Errors';
 import * as O from 'fp-ts/Option';
 import * as RemoteData from '@devexperts/remote-data-ts';
 import * as TE from 'fp-ts/TaskEither';
-import * as t from 'lib/io-ts';
 
-import { DropzoneOptions, useDropzone } from 'react-dropzone';
+import { DropzoneOptions } from 'react-dropzone';
 import { identity, pipe } from 'fp-ts/function';
 import { fetchJSON } from 'fp-fetch';
 import React, { useEffect } from 'react';
-import FailureComponent from './components/failureStateComponenet';
-import InitialComponent from './components/initialStateComponent';
-import LoadingComponenet from './components/loadingStateComponent';
-import SuccessComponent from './components/successStateComponent';
+import FailureComponent from 'components/failureStateComponenet';
+import InitialComponent from 'components/initialStateComponent';
+import LoadingComponenet from 'components/loadingStateComponent';
+import SuccessComponent from 'components/successStateComponent';
 
 type UploadRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
