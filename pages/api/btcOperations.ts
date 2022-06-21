@@ -1,22 +1,22 @@
-import { pipe, flow } from "fp-ts/function";
-import * as E from "fp-ts/Either";
-import * as A from "fp-ts/Array";
-import * as t from "lib/io-ts";
-import * as TE from "fp-ts/TaskEither";
+import { pipe, flow } from 'fp-ts/function';
+import * as E from 'fp-ts/Either';
+import * as A from 'fp-ts/Array';
+import * as t from 'lib/io-ts';
+import * as TE from 'fp-ts/TaskEither';
 import {
   btcPayloadDecoder,
   rateCADUSDDecoder,
   currentBTCUSDDecoder,
   shakepayRatesDecoder,
-} from "lib/BtcDecod";
-import * as Apply from "fp-ts/lib/Apply";
-import * as Errors from "lib/Errors";
-import { formatValidationErrors } from "io-ts-reporters";
+} from 'lib/BtcDecod';
+import * as Apply from 'fp-ts/lib/Apply';
+import * as Errors from 'lib/Errors';
+import { formatValidationErrors } from 'io-ts-reporters';
 
 export function convertTodayDate(): { start: string; end: string } {
   const today = new Date();
-  const dd = String(today.getDate()).padStart(2, "0");
-  const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   const yyyy = String(today.getFullYear());
   const dbefore = String(parseInt(dd) - 1);
   const startDate: string = `${yyyy}-${mm}-${dbefore}`;
@@ -28,10 +28,10 @@ export function convertTodayDate(): { start: string; end: string } {
   return date;
 }
 export function convertCsvDate(date: string): string {
-  const splitdate = date.split("-");
+  const splitdate = date.split('-');
   const yyyy = splitdate[0];
   const mm = splitdate[1];
-  const dayandTime = splitdate[2].split("T");
+  const dayandTime = splitdate[2].split('T');
   const dd = dayandTime[0];
   date = `${yyyy}-${mm}-${dd}`;
   return date;
@@ -50,15 +50,17 @@ export const HistoricalBtcPriceURL = (date: string) => {
 };
 
 const currentExchangeRateURL: string =
-  "https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=1";
+  'https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=1';
 
 const currentUSDBTCpriceURL: string =
-  "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT";
+  'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT';
 
 const decodeWith = <A>(decoder: t.Decoder<unknown, A>) =>
   flow(
     decoder.decode,
-    E.mapLeft((errors) => new Error(formatValidationErrors(errors).join("\n"))),
+    E.mapLeft(
+      (errors) => new Error(formatValidationErrors(errors).join('\n'))
+    ),
     TE.fromEither
   );
 
@@ -77,7 +79,9 @@ const currentExchangeRate = pipe(
   currentExchangeRateURL,
   getFromURL(rateCADUSDDecoder),
   TE.map((x) => x.observations),
-  TE.chainOptionK(() => new Error("Observations Array was empty"))(A.head),
+  TE.chainOptionK(() => new Error('Observations Array was empty'))(
+    A.head
+  ),
   TE.map((a) => a.FXUSDCAD.v)
 );
 
@@ -94,7 +98,12 @@ export const currentCADBTCPrice = pipe(
     ExchangeRate: currentExchangeRate,
     USDPrice: currentUSDBTCPrice,
   }),
-  TE.map(({ ExchangeRate, USDPrice }) => ExchangeRate * USDPrice)
+  TE.map(({ ExchangeRate, USDPrice }) => ExchangeRate * USDPrice),
+  TE.mapLeft((_) =>
+    Errors.APIUpload.ThirdPartyApiError({
+      value: 'Could not Fetch Btc Price',
+    })
+  )
   // TE.Do,
   // TE.bind('currentExchangeRate', () => currentExchangeRate),
   // TE.bind('currentUSDBTCPrice', () => currentUSDBTCPrice),
@@ -110,7 +119,9 @@ export const currentCADBTCPrice = pipe(
 const getAvgBtcPrice = pipe(
   currentCADBTCPrice,
   TE.mapLeft((_) =>
-    Errors.APIUpload.ThirdPartyApiError({ value: "Could not fetch Btc price" })
+    Errors.APIUpload.ThirdPartyApiError({
+      value: 'Could not fetch Btc price',
+    })
   ),
   TE.map((btcPriceInCAD) => {
     const AvgBtcPrice = btcPriceInCAD;
@@ -127,12 +138,17 @@ export const getBtcPriceInCADByDate = (date: string) => {
   );
 };
 
-export const shakepayRatesUrl: string = "/api/rates";
-export const liveBTCCADprice: TE.TaskEither<Errors.NetworkError, number> = pipe(
+export const shakepayRatesUrl: string = '/api/rates';
+export const liveBTCCADprice: TE.TaskEither<
+  Errors.NetworkError,
+  number
+> = pipe(
   shakepayRatesUrl,
   getFromURL(shakepayRatesDecoder),
   TE.map((x) => x.BTC_CAD),
   TE.mapLeft((_) =>
-     Errors.NetworkError.UnknownAPIError({value: {error: "could not fetch Btc Price"}})
-     )
+    Errors.NetworkError.UnknownAPIError({
+      value: { error: 'could not fetch Btc Price' },
+    })
+  )
 );

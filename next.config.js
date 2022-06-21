@@ -1,6 +1,7 @@
 module.exports = {
   reactStrictMode: true,
-
+  // target: "serverless", in case we want to deploy for netlify
+  // distDir: 'dist',
   api: {
     bodyParser: false
   },

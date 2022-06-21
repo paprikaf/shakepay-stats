@@ -1,0 +1,10 @@
+"Transaction Type","Date","Amount Debited","Debit Currency","Amount Credited","Credit Currency","Buy / Sell Rate","Direction","Spot Rate","Source / Destination","Blockchain Transaction ID"
+"fiat funding","2021-02-25T16:04:28+00",,,100,"CAD",,"credit",,"felfelahmeed@gmail.com",
+"purchase/sale","2021-02-25T16:06:51+00",100,"CAD",0.00155521,"BTC","64299.7053","purchase",,,
+"other","2021-02-25T23:42:16+00",,,30,"CAD",,"credit",,,
+"purchase/sale","2021-02-26T12:59:27+00",30,"CAD",0.0004994,"BTC","60071.9945","purchase",,,
+"crypto funding","2021-03-08T13:11:57+00",,,0.0002366,"BTC",,"credit","63964.0776",,"7495943dc655397ccf9740c919b3fed1e9301c68cfc7a6ff4318a75474312d5f"
+"fiat funding","2021-03-14T01:17:05+00",,,300,"CAD",,"credit",,"felfelahmeed@gmail.com",
+"shakingsats","2021-03-14T05:05:08+00",,,0.0000038,"BTC",,"credit","76428.8550",,
+"purchase/sale","2021-03-14T14:16:45+00",100,"CAD",0.00131175,"BTC","76233.9259","purchase",,,
+"fiat funding","2021-03-25T17:51:09+00",,,400,"CAD",,"credit",,"felfelahmeed@gmail.com",

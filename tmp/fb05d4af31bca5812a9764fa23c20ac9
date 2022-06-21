@@ -1,0 +1,8 @@
+"Transaction Type","Date","Amount Debited","Debit Currency","Amount Credited","Credit Currency","Buy / Sell Rate","Direction","Spot Rate","Source / Destination","Blockchain Transaction ID"
+"fiat funding","2021-02-25T16:04:28+00",,,100,"CAD",,"credit",,"xxxx@gmail.com",
+"purchase/sale","2021-02-25T16:06:51+00",100,"CAD",0.052111,"BTC","64299.7053","purchase",,,
+"other","2021-02-25T23:42:16+00",,,30,"CAD",,"credit",,,
+"shakingsats","2021-02-27T17:36:02+00",,,0.0000028,"BTC",,"credit","59932.2100",,
+"crypto funding","2021-03-08T13:11:57+00",,,0.0002366,"BTC",,"credit","63964.0776",,"xxxxxxxxxxxxxxxxx"
+"peer transfer","2021-04-12T01:16:40+00",18,"CAD",,,,"debit",,"@xxx",
+"shakingsats","2021-04-27T09:42:42+00",,,0.0000029,"BTC",,"credit","67901.6478",,

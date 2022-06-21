@@ -1,24 +1,26 @@
-import * as Csv from "lib/Csv";
-import * as E from "fp-ts/Either";
-import * as Errors from "lib/Errors";
-import * as Next from "next";
-import * as Response from "lib/Response";
-import * as TE from "fp-ts/TaskEither";
-import * as t from "lib/io-ts";
+import * as Csv from 'lib/Csv';
+import * as E from 'fp-ts/Either';
+import * as Errors from 'lib/Errors';
+import * as Next from 'next';
+import * as Response from 'lib/Response';
+import * as TE from 'fp-ts/TaskEither';
+import * as t from 'lib/io-ts';
 
-import { flow, pipe } from "fp-ts/function";
+import { flow, pipe } from 'fp-ts/function';
 
-import connect from "next-connect";
-import csv from "csv-parser";
-import fs from "fs";
-import multer from "multer";
+import connect from 'next-connect';
+import csv from 'csv-parser';
+import fs from 'fs';
+import multer from 'multer';
 
-import { stats } from "./stats";
+import { stats } from './stats';
 
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
     codec.decode,
-    E.mapLeft((errors) => Errors.APIUpload.DecodeError({ value: { errors } }))
+    E.mapLeft((errors) =>
+      Errors.APIUpload.DecodeError({ value: { errors } })
+    )
   );
 
 const readFile = (fileName: string) =>
@@ -28,9 +30,9 @@ const readFile = (fileName: string) =>
         const stream: unknown[] = [];
         fs.createReadStream(fileName)
           .pipe(csv())
-          .on("data", (data) => stream.push(data))
-          .on("error", reject)
-          .on("end", () => {
+          .on('data', (data) => stream.push(data))
+          .on('error', reject)
+          .on('end', () => {
             resolve(stream);
           });
       });
@@ -49,7 +51,7 @@ const Upload = t.type(
     path: t.string,
     size: t.number,
   },
-  "Upload"
+  'Upload'
 );
 
 interface Upload extends t.TypeOf<typeof Upload> {}
@@ -59,14 +61,14 @@ export const handler = connect({
     _request: Next.NextApiRequest,
     response: Next.NextApiResponse<unknown>
   ) => {
-    response.status(404).json({ error: "Not found" });
+    response.status(404).json({ error: 'Not found' });
   },
 });
 
 // TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
-    dest: "tmp/",
+    dest: 'tmp/',
   }).single(Csv.fieldName)
 );
 
