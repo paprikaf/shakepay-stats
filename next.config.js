@@ -12,6 +12,11 @@ module.exports = {
         source: '/api/rates',
         destination: "https://api.shakepay.com/rates",
       },
+      {
+        source: '/api/csv',
+        destination: '/api/csv'
+      }
+      ,
     ]
   } 
 }
