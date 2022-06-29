@@ -56,7 +56,6 @@ export default function Home() {
   const [btcPrice, setBtcPrice] = React.useState<BtcPriceRemoteData>(
     RemoteData.initial
   );
-
   useEffect(() => {
     currentBtcprice
       .then((responseE) => RemoteData.fromEither(responseE))
@@ -85,9 +84,10 @@ export default function Home() {
             })
         )
       ),
-      TE.map((body: Csv.Response) =>
-        setRequest(RemoteData.success(body))
-      ),
+      // TE.map((body: Csv.Response) =>
+      //    setRequest(RemoteData.success(body))
+      // ),
+      TE.map((error) => setRequest(RemoteData.failure(error))), // to develop failure page
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
