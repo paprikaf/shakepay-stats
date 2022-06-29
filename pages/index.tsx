@@ -84,10 +84,9 @@ export default function Home() {
             })
         )
       ),
-      // TE.map((body: Csv.Response) =>
-      //    setRequest(RemoteData.success(body))
-      // ),
-      TE.map((error) => setRequest(RemoteData.failure(error))), // to develop failure page
+      TE.map((body: Csv.Response) =>
+        setRequest(RemoteData.success(body))
+      ),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
   };
