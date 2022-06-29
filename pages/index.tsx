@@ -111,7 +111,7 @@ export default function Home() {
             />
           ),
           () => <LoadingComponenet btcPrice={btcPrice} />,
-          () => <FailureComponent />,
+          () => <FailureComponent btcPrice={btcPrice} />,
           () => (
             <SuccessComponent
               btcPrice={btcPrice}
