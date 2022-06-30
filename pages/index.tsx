@@ -14,6 +14,7 @@ import FailureComponent from 'components/failureStateComponenet';
 import InitialComponent from 'components/initialStateComponent';
 import LoadingComponenet from 'components/loadingStateComponent';
 import SuccessComponent from 'components/successStateComponent';
+import { StatusCodes } from 'http-status-codes';
 
 type UploadRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
@@ -43,8 +44,11 @@ const upload = (
     (error) =>
       error instanceof TypeError
         ? Errors.NetworkError.FetchError({ value: { error } })
-        : Errors.NetworkError.UnknownAPIError({
-            value: { error: 'Unknown error occurred' },
+        : Errors.NetworkError.APIError({
+            value: {
+              status: StatusCodes.BAD_REQUEST,
+              error: 'Unknown error occurred',
+            },
           })
   );
 
@@ -74,13 +78,15 @@ export default function Home() {
       }, identity),
       TE.of,
       TE.chain(upload),
-
       TE.chain((response) =>
         TE.tryCatch(
           () => response.json(),
           (_error) =>
-            Errors.NetworkError.UnknownAPIError({
-              value: { error: 'Could not decode response as json' },
+            Errors.NetworkError.APIError({
+              value: {
+                status: StatusCodes.BAD_REQUEST,
+                error: 'Could Not Decode Csv file',
+              },
             })
         )
       ),
@@ -89,6 +95,7 @@ export default function Home() {
       ),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
+    console.log('request', request);
   };
   type dropZoneType = DropzoneOptions['onDrop'];
   const onDrop: dropZoneType = (acceptedFiles) => {

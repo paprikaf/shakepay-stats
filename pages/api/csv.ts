@@ -76,25 +76,24 @@ handler.use(
  * We have to specify that the request holds a potential uploaded file.
  * To be safe, we can't assume its type until we decode it, similar to how we should be decoding a request body.
  */
-handler.post<{ file?: unknown /*unkown*/ }>((request, response) => {
+handler.post<{ file?: unknown }>((request, response) => {
   const sendResponse = pipe(
-    request.file, //file metadata
-    E.fromNullable(Errors.APIUpload.NoFile({})), //checkes if there is a file
-    TE.fromEither, //??
-    TE.chainEitherK(validate(Upload)), //validate file format ?
-    TE.chain((file) => readFile(file.path)), //  read file return the record? [result]
-    TE.chainEitherK(validate(t.array(Csv.CsvT))), // validate record
+    request.file,
+    E.fromNullable(Errors.APIUpload.NoFile({})),
+    TE.fromEither,
+    TE.chainEitherK(validate(Upload)),
+    TE.chain((file) => readFile(file.path)),
+    TE.chainEitherK(validate(t.array(Csv.CsvT))),
     TE.chain(stats),
     TE.mapLeft(
-      //in case of error
       flow(Response.fromUploadError, (descriptor) => {
         response.status(descriptor.status).json(descriptor);
       })
     ),
-    TE.map(response.json) // return record
+    TE.map(response.json)
   );
 
-  sendResponse(); //excute
+  sendResponse();
 });
 
 export default handler;

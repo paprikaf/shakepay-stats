@@ -12,6 +12,7 @@ import {
 import * as Apply from 'fp-ts/lib/Apply';
 import * as Errors from 'lib/Errors';
 import { formatValidationErrors } from 'io-ts-reporters';
+import { StatusCodes } from 'http-status-codes';
 
 export function convertTodayDate(): { start: string; end: string } {
   const today = new Date();
@@ -147,8 +148,11 @@ export const liveBTCCADprice: TE.TaskEither<
   getFromURL(shakepayRatesDecoder),
   TE.map((x) => x.BTC_CAD),
   TE.mapLeft((_) =>
-    Errors.NetworkError.UnknownAPIError({
-      value: { error: 'could not fetch Btc Price' },
+    Errors.NetworkError.APIError({
+      value: {
+        error: 'could not fetch Btc Price',
+        status: StatusCodes.BAD_REQUEST,
+      },
     })
   )
 );

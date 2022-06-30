@@ -5,20 +5,20 @@ import {
   PurchaseOrSaleMember,
   DirectionType,
   CreditDebitType,
-} from "lib/Csv";
-import { Refinement } from "fp-ts/Refinement";
-import * as A from "fp-ts/Array";
-import { pipe } from "fp-ts/function";
-import * as BtcOperations from "./btcOperations";
-import * as Errors from "lib/Errors";
-import * as TE from "fp-ts/TaskEither";
+} from 'lib/Csv';
+import { Refinement } from 'fp-ts/Refinement';
+import * as A from 'fp-ts/Array';
+import { pipe } from 'fp-ts/function';
+import * as BtcOperations from './btcOperations';
+import * as Errors from 'lib/Errors';
+import * as TE from 'fp-ts/TaskEither';
 
 const makeRefinment =
   <T extends SingleMember>(
     transcationType: TransactionType
   ): Refinement<SingleMember, T> =>
   (x): x is T =>
-    x["Transaction Type"] === transcationType;
+    x['Transaction Type'] === transcationType;
 
 const makeRefinmentDirection =
   <T extends SingleMember>(
@@ -35,23 +35,20 @@ export const transactionTypeRecord =
 export const getCollection =
   (description: string) => (collection: Array<Csv>) =>
     collection.map((rec: any) => {
-      // console.log(rec)
       const filtedRec = {
         Amount: rec[description],
-        date: rec["Date"],
+        date: rec['Date'],
       };
-
-      // console.log(filtedRec);
       return rec[description];
     });
 const getDebitCollection = (csv: Array<Csv>): Array<number> => {
   return csv.map((rec: any) => {
-    return rec["Amount Debited"];
+    return rec['Amount Debited'];
   });
 };
 const getCreditCollection = (csv: Array<Csv>) =>
   csv.map((rec: any) => {
-    return rec["Amount Credited"];
+    return rec['Amount Credited'];
   });
 export const getDiff = (debitSum: number, creditSum: number) =>
   debitSum > creditSum ? debitSum - creditSum : creditSum - debitSum;
@@ -87,13 +84,11 @@ const getPriceByDate = (
     BtcOperations.getBtcPriceInCADByDate(date),
     TE.mapLeft((_) =>
       Errors.APIUpload.ThirdPartyApiError({
-        value: "Could Not Fetch BTC Price",
+        value: 'Could Not Fetch BTC Price',
       })
     ),
     TE.map((BtcPriceByDate) => {
-      // console.log('BTCPRICEBYDATE', BtcPriceByDate)
       const Price = BtcPriceByDate;
-      // console.log('PriceTESTRTEFDDTTEGD', Price);
       return Price;
     })
   );
@@ -102,9 +97,7 @@ export const getCollectionDate =
     collection.map((rec: any) => {
       const filtedRec = {
         Amount: rec[description],
-        date: rec["Date"],
+        date: rec['Date'],
       };
-      console.log(filtedRec);
-      // return rec[description];
       return filtedRec;
     });

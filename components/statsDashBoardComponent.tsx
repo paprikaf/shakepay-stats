@@ -1,7 +1,11 @@
 import React from 'react';
 import * as Csv from 'lib/Csv';
 
-const dollarUSLocale = Intl.NumberFormat('en-US');
+const dollarUSLocale = Intl.NumberFormat('en-CA', {
+  style: 'currency',
+  currency: 'CAD',
+  currencyDisplay: 'code',
+});
 //TODO: Work on the desing for this component
 const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
   return (
@@ -16,46 +20,38 @@ const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
           <div>
             <div>Crypto Cashout 💎🙌</div>
             <div>
-              $ {dollarUSLocale.format(props['crypto cashout'])}
+              {dollarUSLocale.format(props['crypto cashout'])}
             </div>
           </div>
           <div>
             <div>Crypto Funding 🧨</div>
             <div>
-              $ {dollarUSLocale.format(props['crypto funding'])}
+              {dollarUSLocale.format(props['crypto funding'])}
             </div>
           </div>
           <div>
             <div>Fiat Cashout 💸</div>
-            <div>
-              $ {dollarUSLocale.format(props['fiat cashout'])}
-            </div>
+            <div>{dollarUSLocale.format(props['fiat cashout'])}</div>
           </div>
           <div>
             <div>Fiat Funding 🏦</div>
-            <div>
-              $ {dollarUSLocale.format(props['fiat funding'])}
-            </div>
+            <div>{dollarUSLocale.format(props['fiat funding'])}</div>
           </div>
           <div>
             <div>Peer Transfer 🔛</div>{' '}
-            <div>
-              $ {dollarUSLocale.format(props['peer transfer'])}
-            </div>
+            <div>{dollarUSLocale.format(props['peer transfer'])}</div>
           </div>
           <div>
             <div>Purchase Or Sale 📈</div>
-            <div>
-              $ {dollarUSLocale.format(props['purchase/sale'])}
-            </div>
+            <div>{dollarUSLocale.format(props['purchase/sale'])}</div>
           </div>
           <div>
             <div>shakingsats 🤝</div>{' '}
-            <div>$ {dollarUSLocale.format(props['shakingsats'])}</div>
+            <div>{dollarUSLocale.format(props['shakingsats'])}</div>
           </div>
           <div>
             <div>Other 🪤</div>{' '}
-            <div>$ {dollarUSLocale.format(props['other'])}</div>
+            <div>{dollarUSLocale.format(props['other'])}</div>
           </div>
         </div>
       </div>
