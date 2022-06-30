@@ -1,3 +1,0 @@
-"Transaction Type","Date","Amount Debited","Debit Currency","Amount Credited","Credit Currency","Buy / Sell Rate","Direction","Spot Rate","Source / Destination","Blockchain Transaction ID"
-"purchase/sale","2021-02-25T16:06:51+00",100,"CAD",0.00155521,"BTC","64299.7053","purchase",,,
-"purchase/sale","2021-11-05T22:55:08+00",0.0068,"BTC",512.23,"CAD","75328.1811","sale",,,

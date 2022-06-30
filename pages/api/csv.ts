@@ -68,7 +68,11 @@ export const handler = connect({
 // TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
-    dest: 'tmp/',
+    storage: multer.diskStorage({
+      destination: './public/tmp',
+      filename: (req, file, cb) => cb(null, file.originalname),
+    }),
+    // dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
   }).single(Csv.fieldName)
 );
 

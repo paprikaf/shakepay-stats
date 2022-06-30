@@ -1,3 +1,0 @@
-"Transaction Type","Date","Amount Debited","Debit Currency","Amount Credited","Credit Currency","Buy / Sell Rate","Direction","Spot Rate","Source / Destination","Blockchain Transaction ID"
-"peer transfer","2021-04-12T01:16:40+00",18,"CAD",,,,"debit",,"@ananas",
-"peer transfer","2021-04-21T23:47:03+00",,,5,"CAD",,"credit",,"@ananas",
