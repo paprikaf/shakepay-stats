@@ -23,6 +23,17 @@ const validate = <I, A>(codec: t.Decoder<I, A>) =>
     )
   );
 
+// import { readFileSync } from 'fs';
+// import path from 'path';
+
+// export default function handler(req, res) {
+//   const file = path.join(process.cwd(), 'files', 'test.json');
+//   const stringified = readFileSync(file, 'utf8');
+
+//   res.setHeader('Content-Type', 'application/json');
+//   return res.end(stringified);
+// }
+// process.cwd()
 const readFile = (fileName: string) =>
   TE.tryCatch(
     () => {
@@ -68,13 +79,10 @@ export const handler = connect({
 // TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
-    storage: multer.diskStorage({
-      destination: './public/tmp',
-      filename: (req, file, cb) => cb(null, file.originalname),
-    }),
-    // dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
+    dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
   }).single(Csv.fieldName)
 );
+// api/hello.js
 
 /**
  * We have to specify that the request holds a potential uploaded file.
