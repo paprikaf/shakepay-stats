@@ -34,6 +34,7 @@ const validate = <I, A>(codec: t.Decoder<I, A>) =>
 //   return res.end(stringified);
 // }
 // process.cwd()
+
 const readFile = (fileName: string) =>
   TE.tryCatch(
     () => {
@@ -82,7 +83,6 @@ handler.use(
     dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
   }).single(Csv.fieldName)
 );
-// api/hello.js
 
 /**
  * We have to specify that the request holds a potential uploaded file.
