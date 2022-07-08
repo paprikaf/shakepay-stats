@@ -96,7 +96,7 @@ handler.post<{ file?: unknown }>((request, response) => {
     TE.chainEitherK(validate(Upload)),
     TE.chain((file) => readFile(file.path)),
     TE.chainEitherK(validate(t.array(Csv.CsvT))),
-    // TE.chain(stats),
+    TE.chain(stats),
     TE.mapLeft(
       flow(Response.fromUploadError, (descriptor) => {
         response.status(descriptor.status).json(descriptor);
