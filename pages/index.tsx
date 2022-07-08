@@ -95,7 +95,6 @@ export default function Home() {
       ),
       TE.mapLeft((error) => setRequest(RemoteData.failure(error)))
     )();
-    console.log('request', request);
   };
   type dropZoneType = DropzoneOptions['onDrop'];
   const onDrop: dropZoneType = (acceptedFiles) => {

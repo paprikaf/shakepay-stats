@@ -4,12 +4,12 @@ import {
   Csv,
   PurchaseOrSaleMember,
   CreditDebitType,
-} from "lib/Csv";
-import * as TE from "fp-ts/TaskEither";
-import { pipe } from "fp-ts/function";
-import * as Errors from "lib/Errors";
-import * as Operations from "./operations";
-import * as BtcOperations from "./btcOperations";
+} from 'lib/Csv';
+import * as TE from 'fp-ts/TaskEither';
+import { pipe } from 'fp-ts/function';
+import * as Errors from 'lib/Errors';
+import * as Operations from './operations';
+import * as BtcOperations from './btcOperations';
 
 export const stats = (
   csvItems: Array<Csv>
@@ -25,7 +25,7 @@ export const stats = (
 
     TE.mapLeft((_) =>
       Errors.APIUpload.ThirdPartyApiError({
-        value: "Could not fetch Btc price",
+        value: 'Could not fetch Btc price',
       })
     ),
 
@@ -33,7 +33,7 @@ export const stats = (
       const shakingSatsSum = pipe(
         csvItems,
         Operations.transactionTypeRecord(TransactionType.ShakingSats),
-        Operations.getCollection("Amount Credited"),
+        Operations.getCollection('Amount Credited'),
         Operations.getSum,
         Operations.convertBTCToCAD(btcPriceInCAD)
       );
@@ -48,7 +48,9 @@ export const stats = (
 
       const purchaseSum = pipe(
         csvItems,
-        Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
+        Operations.transactionTypeRecord(
+          TransactionType.PurchaseOrSale
+        ),
         Operations.diffrenceSequence
         // Operations.getCollection('Amount Credited'),
         // Operations.getSum
@@ -56,7 +58,9 @@ export const stats = (
 
       const cryptoFundingSum = pipe(
         csvItems,
-        Operations.transactionTypeRecord(TransactionType.CryptoFunding),
+        Operations.transactionTypeRecord(
+          TransactionType.CryptoFunding
+        ),
         // Operations.getCollection('Amount Credited'),
         // Operations.getSum,
         Operations.diffrenceSequence,
@@ -65,7 +69,9 @@ export const stats = (
 
       const cryptoCashoutSum = pipe(
         csvItems,
-        Operations.transactionTypeRecord(TransactionType.CryptoCashout),
+        Operations.transactionTypeRecord(
+          TransactionType.CryptoCashout
+        ),
         // Operations.getCollection('Amount Debited'),
         // Operations.getSum
         Operations.diffrenceSequence
@@ -81,7 +87,9 @@ export const stats = (
 
       const peerTransferSum = pipe(
         csvItems,
-        Operations.transactionTypeRecord(TransactionType.PeerTransfer),
+        Operations.transactionTypeRecord(
+          TransactionType.PeerTransfer
+        ),
         Operations.diffrenceSequence
         // Operations.getCollection('Amount Debited'),
         // Operations.getSum
@@ -90,7 +98,7 @@ export const stats = (
       const otherSum = pipe(
         csvItems,
         Operations.transactionTypeRecord(TransactionType.Other),
-        Operations.getCollection("Amount Credited"),
+        Operations.getCollection('Amount Credited'),
         Operations.getSum
       );
       // const purchase = pipe (csvItems,
