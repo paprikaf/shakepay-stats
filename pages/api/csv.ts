@@ -5,8 +5,8 @@ import * as Next from 'next';
 import * as Response from 'lib/Response';
 import * as TE from 'fp-ts/TaskEither';
 import * as t from 'lib/io-ts';
-
 import { flow, pipe } from 'fp-ts/function';
+import * as CSVS from 'csv-string';
 
 import connect from 'next-connect';
 import csv from 'csv-parser';
@@ -14,6 +14,8 @@ import fs from 'fs';
 import multer from 'multer';
 
 import { stats } from './stats';
+
+const csvToJson = require('csvToJson');
 
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
@@ -23,34 +25,32 @@ const validate = <I, A>(codec: t.Decoder<I, A>) =>
     )
   );
 
-// import { readFileSync } from 'fs';
-// import path from 'path';
-
-// export default function handler(req, res) {
-//   const file = path.join(process.cwd(), 'files', 'test.json');
-//   const stringified = readFileSync(file, 'utf8');
-
-//   res.setHeader('Content-Type', 'application/json');
-//   return res.end(stringified);
-// }
-// process.cwd()
-
-const readFile = (fileName: string) =>
-  TE.tryCatch(
-    () => {
-      return new Promise((resolve, reject) => {
-        const stream: unknown[] = [];
-        fs.createReadStream(fileName)
-          .pipe(csv())
-          .on('data', (data) => stream.push(data))
-          .on('error', reject)
-          .on('end', () => {
-            resolve(stream);
-          });
-      });
+const parseFile = (input: any) => {
+  return TE.tryCatch(
+    async () => {
+      const result = await csvToJson().fromString(input.toString());
+      return result;
     },
     (_) => Errors.APIUpload.CsvParseError({})
   );
+};
+
+// const readFile = (fileName: string) =>
+//   TE.tryCatch(
+//     () => {
+//       return new Promise((resolve, reject) => {
+//         const stream: unknown[] = [];
+//         fs.createReadStream(fileName)
+//           .pipe(csv())
+//           .on('data', (data) => stream.push(data))
+//           .on('error', reject)
+//           .on('end', () => {
+//             resolve(stream);
+//           });
+//       });
+//     },
+//     (_) => Errors.APIUpload.CsvParseError({})
+//   );
 
 const Upload = t.type(
   {
@@ -58,10 +58,11 @@ const Upload = t.type(
     originalname: t.string,
     encoding: t.string,
     mimetype: t.string,
-    destination: t.string,
-    filename: t.string,
-    path: t.string,
+    // destination: t.string, //not needed anymore switiching to memeroy storage
+    // filename: t.string, //not needed anymore switiching to memeroy storage
+    // path: t.string, //not needed anymore switiching to memeroy storage
     size: t.number,
+    buffer: t.unknown,
   },
   'Upload'
 );
@@ -77,10 +78,12 @@ export const handler = connect({
   },
 });
 
+const storage = multer.memoryStorage();
 // TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
-    dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
+    // dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
+    storage: storage,
   }).single(Csv.fieldName)
 );
 
@@ -94,7 +97,8 @@ handler.post<{ file?: unknown }>((request, response) => {
     E.fromNullable(Errors.APIUpload.NoFile({})),
     TE.fromEither,
     TE.chainEitherK(validate(Upload)),
-    TE.chain((file) => readFile(file.path)),
+    // TE.chain((file) => readFile(file.path)),
+    TE.chain((file) => parseFile(file.buffer)),
     TE.chainEitherK(validate(t.array(Csv.CsvT))),
     TE.chain(stats),
     TE.mapLeft(
