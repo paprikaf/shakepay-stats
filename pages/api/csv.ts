@@ -6,16 +6,13 @@ import * as Response from 'lib/Response';
 import * as TE from 'fp-ts/TaskEither';
 import * as t from 'lib/io-ts';
 import { flow, pipe } from 'fp-ts/function';
-import * as CSVS from 'csv-string';
 
 import connect from 'next-connect';
-import csv from 'csv-parser';
-import fs from 'fs';
 import multer from 'multer';
 
 import { stats } from './stats';
 
-const csvToJson = require('csvToJson');
+const csvToJson = require('csvtojson');
 
 const validate = <I, A>(codec: t.Decoder<I, A>) =>
   flow(
