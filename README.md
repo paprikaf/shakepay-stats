@@ -18,4 +18,5 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 ```bash
 curl -X POST http://localhost:3000/api/csv -F csv_file=@test.csv
+curl -X POST https://shakepay-stats.vercel.app/api/csv -F csv_file=@test.csv
 ```
