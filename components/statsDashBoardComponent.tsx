@@ -11,7 +11,10 @@ const dollarUSLocale = Intl.NumberFormat('en-CA', {
 const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
   return (
     <div className="display: block grid justify-items-center">
-      <div className="text-3xl hover:text-yellow-400 grid justify-items-center mb-10">
+      <div
+        className="text-3xl hover:text-yellow-400 grid justify-items-center mb-10"
+        onClick={() => location.reload()}
+      >
         {' '}
         STATS 💰
       </div>

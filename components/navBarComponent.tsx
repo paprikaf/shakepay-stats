@@ -2,6 +2,7 @@ import React from 'react';
 import BtcPriceComponent from './btcPriceComponent';
 import * as RemoteData from '@devexperts/remote-data-ts';
 import * as Errors from 'lib/Errors';
+import Link from 'next/link';
 
 type BtcPriceRemoteData = RemoteData.RemoteData<
   Errors.NetworkError,
@@ -21,12 +22,11 @@ const NavBarComponent: React.FC<{ btcPrice: BtcPriceRemoteData }> = ({
               src="/favicon.ico"
               alt="BitcoinLogo"
             />
-            <span
-              className="hover:text-red-400"
-              onClick={() => location.reload()}
-            >
-              Shakepay Stats
-            </span>
+            <Link href="/">
+              <span className="hover:text-red-400">
+                Shakepay Stats
+              </span>
+            </Link>
           </div>
         </div>
         <span>
@@ -35,7 +35,9 @@ const NavBarComponent: React.FC<{ btcPrice: BtcPriceRemoteData }> = ({
           ) : null}
         </span>
         <ul className="flex items-center ml-4">
-          <li>About 📜</li>
+          <li>
+            <Link href="/about">About 📜</Link>
+          </li>
         </ul>
       </nav>
     </div>
