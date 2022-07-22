@@ -100,6 +100,7 @@ handler.post<{ file?: unknown }>((request, response) => {
     TE.chain(stats),
     TE.mapLeft(
       flow(Response.fromUploadError, (descriptor) => {
+        response.redirect(descriptor.status, '');
         response.status(descriptor.status).json(descriptor);
       })
     ),
