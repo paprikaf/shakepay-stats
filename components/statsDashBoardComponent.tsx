@@ -6,7 +6,7 @@ const dollarUSLocale = Intl.NumberFormat('en-CA', {
   currency: 'CAD',
   currencyDisplay: 'code',
 });
-//TODO: Work on the desing for this component
+//TODO: Work on the UI for this component
 const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
   return (
     <div className="display: block grid justify-items-center">
@@ -46,11 +46,23 @@ const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
             <div>{dollarUSLocale.format(props['purchase/sale'])}</div>
           </div>
           <div>
-            <div>shakingsats 🤝</div>{' '}
+            <div>Shakingsats 🤝</div>{' '}
             <div>{dollarUSLocale.format(props['shakingsats'])}</div>
           </div>
           <div>
-            <div>Other 🪤</div>{' '}
+            <div>Card Transactions ☕</div>{' '}
+            <div>
+              {dollarUSLocale.format(props['card transactions'])}
+            </div>
+          </div>
+          <div>
+            <div>Card Cashbacks 💰 🔙</div>{' '}
+            <div>
+              {dollarUSLocale.format(props['card cashbacks'])}
+            </div>
+          </div>
+          <div>
+            <div>Other 🪤 </div>{' '}
             <div>{dollarUSLocale.format(props['other'])}</div>
           </div>
         </div>

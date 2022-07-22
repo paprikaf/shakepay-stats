@@ -2,9 +2,7 @@ import {
   TransactionType,
   Csv,
   SingleMember,
-  PurchaseOrSaleMember,
   DirectionType,
-  CreditDebitType,
 } from 'lib/Csv';
 import { Refinement } from 'fp-ts/Refinement';
 import * as A from 'fp-ts/Array';

@@ -6,3 +6,7 @@
 "crypto funding","2021-03-08T13:11:57+00",,,0.0002366,"BTC",,"credit","63964.0776",,"xxxxxxxxxxxxxxxxx"
 "peer transfer","2021-04-12T01:16:40+00",18,"CAD",,,,"debit",,"@xxx",
 "purchase/sale","2021-11-05T22:55:08+00",0.0068,"BTC",512.23,"CAD","75328.1811","sale",,,
+"card transactions","2022-07-12T21:48:57+00",31.49,"CAD",,,,"debit",,"DOORDASHFRISQUET",
+"card transactions","2022-07-12T21:48:57+00",34.49,"CAD",,,,"debit",,"DOORDASHFRISQUET",
+"card cashbacks","2022-07-11T17:12:08+00",,,0.00001532,"BTC",,"credit","26592.3135","@cashbacks",
+"purchase/sale","2022-07-11T18:14:22+00",20,"CAD",0.00074026,"BTC","27017.4986","purchase",,, 

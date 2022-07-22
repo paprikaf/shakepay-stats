@@ -37,6 +37,8 @@ export enum TransactionType {
   PeerTransfer = 'peer transfer',
   FiatCashout = 'fiat cashout',
   CryptoCashout = 'crypto cashout',
+  CardTransactions = 'card transactions',
+  CardCashbacks = 'card cashbacks',
   Other = 'other',
 }
 
@@ -50,33 +52,7 @@ export enum CreditDebitType {
   Credit = 'Amount Credited',
 }
 
-// {
-//   "Transaction Type": "purchase/sale",
-//   "Date": "2021-02-25T16:06:51+00",
-//   "Amount Debited": 100,
-//   "Debit Currency": "CAD",
-//   "Amount Credited": 0.00155521,
-//   "Credit Currency": "BTC",
-//   "Buy / Sell Rate": 64299.7053,
-//   "Direction": "purchase",
-//   "Spot Rate": "",
-//   "Source / Destination": "",
-//   "Blockchain Transaction ID": ""
-// }
 /**
- * {
-    "Transaction Type": "purchase/sale",
-    "Date": "2022-05-13T22:46:28+00",
-    "Amount Debited": 10,
-    "Debit Currency": "CAD",
-    "Amount Credited": 0.00371925338401324,
-    "Credit Currency": "ETH",
-    "Buy / Sell Rate": 2688.7117,
-    "Direction": "purchase",
-    "Spot Rate": "",
-    "Source / Destination": "",
-    "Blockchain Transaction ID": ""
-  }
  * TODO: there is technically two subtypes here.
  * Based on whether or not we're selling or buying, the debit currency and credit currency will be different
  *
@@ -106,53 +82,21 @@ const PurchaseOrSale = t.type(
   'PurchaseOrSale'
 );
 
-// {
-//   "Transaction Type": "fiat funding",
-//   "Date": "2021-02-25T16:04:28+00",
-//   "Amount Debited": "",
-//   "Amount Credited": 100,
-//   "Debit Currency": "",
-//   "Credit Currency": "CAD",
-//   "Buy / Sell Rate": "",
-//   "Direction": "credit",
-//   "Spot Rate": "",
-//   "Source / Destination": "felfelahmeed@gmail.com",
-//   "Blockchain Transaction ID": ""
-// },
-
 const FiatFunding = t.type(
   {
     Date: t.string,
     'Credit Currency': t.literal('CAD'),
-    // "Amount Credited": t.union([t.string, t.NumberFromString]),
     'Amount Credited': t.NumberFromString,
     Direction: t.literal('credit'),
-
-    // Email usually
     'Source / Destination': t.string,
   },
   'FiatFunding'
 );
 
-// {
-//   "Transaction Type": "shakingsats",
-//   "Date": "2021-03-25T11:38:06+00",
-//   "Amount Debited": "",
-//   "Debit Currency": "",
-//   "Amount Credited": 0.0000052,
-//   "Credit Currency": "BTC",
-//   "Buy / Sell Rate": "",
-//   "Direction": "credit",
-//   "Spot Rate": 66298.9774,
-//   "Source / Destination": "",
-//   "Blockchain Transaction ID": ""
-// },
-
 const ShakingSats = t.type(
   {
     Date: t.string,
     'Credit Currency': t.literal('BTC'),
-    // "Amount Credited": t.union([t.string, t.NumberFromString]),
     'Amount Credited': t.NumberFromString,
     Direction: t.literal('credit'),
     'Spot Rate': t.NumberFromString,
@@ -160,24 +104,9 @@ const ShakingSats = t.type(
   'ShakingSats'
 );
 
-// {
-//   "Transaction Type": "crypto funding",
-//   "Date": "2021-03-08T13:11:57+00",
-//   "Amount Debited": "",
-//   "Debit Currency": "",
-//   "Amount Credited": 0.0002366,
-//   "Credit Currency": "BTC",
-//   "Buy / Sell Rate": "",
-//   "Direction": "credit",
-//   "Spot Rate": 63964.0776,
-//   "Source / Destination": "",
-//   "Blockchain Transaction ID": "7495943dc655397ccf9740c919b3fed1e9301c68cfc7a6ff4318a75474312d5f"
-// },
-
 const CryptoFunding = t.type(
   {
     Date: t.string,
-    // "Amount Credited": t.union([t.string, t.NumberFromString]),
     'Amount Credited': t.NumberFromString,
     // TODO: if we have an ETH transaction, at the moment the validation will fail.
     'Credit Currency': t.literal('BTC'),
@@ -188,46 +117,6 @@ const CryptoFunding = t.type(
   'CryptoFunding'
 );
 
-// {
-//   "Transaction Type": "peer transfer",
-//   "Date": "2021-04-02T15:22:10+00",
-//   "Amount Debited": "",
-//   "Debit Currency": "",
-//   "Amount Credited": 527,
-//   "Credit Currency": "CAD",
-//   "Buy / Sell Rate": "",
-//   "Direction": "credit",
-//   "Spot Rate": "",
-//   "Source / Destination": "@ananas",
-//   "Blockchain Transaction ID": ""
-// },
-
-// {
-//   "Transaction Type": "peer transfer",
-//   "Date": "2021-04-12T01:16:40+00",
-//   "Amount Debited": 18,
-//   "Debit Currency": "CAD",
-//   "Amount Credited": "",
-//   "Credit Currency": "",
-//   "Buy / Sell Rate": "",
-//   "Direction": "debit",
-//   "Spot Rate": "",
-//   "Source / Destination": "@ananas",
-//   "Blockchain Transaction ID": ""
-// },
-// const PeerTransfer = t.intersection([
-//   t.type({ type: t.literal('PeerTransfer') }),
-//   t.union([
-//     t.type({
-//       AmountCredited: EmptyString,
-//       AmountDebited: NumberFromString,
-//     }),
-//     t.type({
-//       AmountCredited: NumberFromString,
-//       AmountDebited: EmptyString,
-//     }),
-//   ]),
-// ]);
 const EmptyString = t.literal('');
 const PeerTransfer = t.intersection(
   [
@@ -254,24 +143,9 @@ const PeerTransfer = t.intersection(
   'PeerTransfer'
 );
 
-// {
-//   "Transaction Type": "fiat cashout",
-//   "Date": "2021-10-25T20:30:03+00",
-//   "Amount Debited": 500,
-//   "Debit Currency": "CAD",
-//   "Amount Credited": "",
-//   "Credit Currency": "",
-//   "Buy / Sell Rate": "",
-//   "Direction": "debit",
-//   "Spot Rate": "",
-//   "Source / Destination": "felfelahmeed@gmail.com",
-//   "Blockchain Transaction ID": ""
-// },
-
 const FiatCashout = t.type(
   {
     Date: t.string,
-    // "Amount Debited": t.union([t.string, t.NumberFromString]),
     'Amount Debited': t.NumberFromString,
     'Debit Currency': t.literal('CAD'),
     Direction: t.union([t.literal('credit'), t.literal('debit')]),
@@ -280,23 +154,9 @@ const FiatCashout = t.type(
   'FiatCashout'
 );
 
-// {
-//   "Transaction Type": "crypto cashout",
-//   "Date": "2021-11-10T17:18:54+00",
-//   "Amount Debited": 0.03,
-//   "Debit Currency": "BTC",
-//   "Amount Credited": "",
-//   "Credit Currency": "",
-//   "Buy / Sell Rate": "",
-//   "Direction": "debit",
-//   "Spot Rate": 85468.1248,
-//   "Source / Destination": "xxxx",
-//   "Blockchain Transaction ID": "xxx"
-// }
 const CryptoCashout = t.type(
   {
     Date: t.string,
-    // "Amount Debited": t.union([t.string, t.NumberFromString]),
     'Amount Debited': t.NumberFromString,
     'Debit Currency': t.literal('BTC'),
     Direction: t.union([t.literal('credit'), t.literal('debit')]),
@@ -305,19 +165,6 @@ const CryptoCashout = t.type(
   },
   'CryptoCashout'
 );
-// {
-//   "Transaction Type": "other",
-//   "Date": "2021-02-25T23:42:16+00",
-//   "Amount Debited": "",
-//   "Debit Currency": "",
-//   "Amount Credited": 30,
-//   "Credit Currency": "CAD",
-//   "Buy / Sell Rate": "",
-//   "Direction": "credit",
-//   "Spot Rate": "",
-//   "Source / Destination": "",
-//   "Blockchain Transaction ID": ""
-// },
 
 //The trasnsation Type : Other is for referrals.
 const Other = t.type(
@@ -347,33 +194,30 @@ const CardTransactions = t.type(
   {
     'Transaction Type': t.string,
     Date: t.string,
-    'Amount Debited': t.string,
+    'Amount Debited': t.NumberFromString,
     'Debit Currency': t.literal('CAD'),
     Direction: t.union([t.literal('debit'), t.literal('credit')]),
     'Source / Destination': t.string,
   },
   'card transactions'
 );
+
 // {
 //   "Transaction Type": "card cashbacks",
-//   "Date": "2021-12-10T14:30:50+00",
-//   "Amount Debited": "",
-//   "Debit Currency": "",
-//   "Amount Credited": 0,
+//   "Date": "2022-07-11T17:12:08+00",
+//   "Amount Credited": 0.00001532,
 //   "Credit Currency": "BTC",
-//   "Buy / Sell Rate": "",
 //   "Direction": "credit",
-//   "Spot Rate": 62995.7333,
+//   "Spot Rate": 26592.3135,
 //   "Source / Destination": "@cashbacks",
-//   "Blockchain Transaction ID": ""
-// }
+// },
 const CardCashbacks = t.type(
   {
     'Transaction Type': t.string,
     Date: t.string,
-    'Amount Credited': t.number,
-    'Credit Currencey': t.literal('BTC'),
-    Direction: t.union([t.literal('debit'), t.literal('credit')]),
+    'Amount Credited': t.NumberFromString,
+    'Credit Currency': t.literal('BTC'),
+    Direction: t.literal('credit'),
     'Spot Rate': t.NumberFromString,
     'Source / Destination': t.string,
   },
@@ -486,6 +330,8 @@ export const ResponseT = t.type({
   'peer transfer': t.number,
   'purchase/sale': t.number,
   shakingsats: t.number,
+  'card cashbacks': t.number,
+  'card transactions': t.number,
 });
 
 export type Response = t.TypeOf<typeof ResponseT>;
