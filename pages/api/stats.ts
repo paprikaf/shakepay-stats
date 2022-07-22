@@ -52,7 +52,7 @@ export const stats = (
           TransactionType.PurchaseOrSale
         ),
         Operations.diffrenceSequence
-        // Operations.getCollection('Amount Credited'),
+        // Operations.getCollection('Amount Credited')
         // Operations.getSum
       );
 

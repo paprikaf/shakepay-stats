@@ -14,12 +14,21 @@ const NavBarComponent: React.FC<{ btcPrice: BtcPriceRemoteData }> = ({
   return (
     <div className='flex flex-col h-screen"'>
       <nav className="flex items-center justify-between mb-12 md:mb-48">
-        <span
-          className="hover:text-blue-400"
-          onClick={() => location.reload()}
-        >
-          Shakepay Stats
-        </span>
+        <div className="inline-block">
+          <div className="flex flex-wrap justify-center ">
+            <img
+              className="w-5 h-5"
+              src="/favicon.ico"
+              alt="BitcoinLogo"
+            />
+            <span
+              className="hover:text-red-400"
+              onClick={() => location.reload()}
+            >
+              Shakepay Stats
+            </span>
+          </div>
+        </div>
         <span>
           {RemoteData.isSuccess(btcPrice) ? (
             <BtcPriceComponent price={btcPrice.value} />

@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Csv from 'lib/Csv';
+import ToggleButton from './toggleButton';
 
 const dollarUSLocale = Intl.NumberFormat('en-CA', {
   style: 'currency',
@@ -16,55 +17,57 @@ const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
       </div>
 
       <div className="flex items-center ml-1">
-        <div className="flex justify-center flex space-x-10">
-          <div>
-            <div>Crypto Cashout 💎🙌</div>
-            <div>
-              {dollarUSLocale.format(props['crypto cashout'])}
-            </div>
-          </div>
-          <div>
-            <div>Crypto Funding 🧨</div>
-            <div>
-              {dollarUSLocale.format(props['crypto funding'])}
-            </div>
-          </div>
-          <div>
-            <div>Fiat Cashout 💸</div>
-            <div>{dollarUSLocale.format(props['fiat cashout'])}</div>
-          </div>
-          <div>
-            <div>Fiat Funding 🏦</div>
-            <div>{dollarUSLocale.format(props['fiat funding'])}</div>
-          </div>
-          <div>
-            <div>Peer Transfer 🔛</div>{' '}
-            <div>{dollarUSLocale.format(props['peer transfer'])}</div>
-          </div>
-          <div>
-            <div>Purchase Or Sale 📈</div>
-            <div>{dollarUSLocale.format(props['purchase/sale'])}</div>
-          </div>
-          <div>
-            <div>Shakingsats 🤝</div>{' '}
-            <div>{dollarUSLocale.format(props['shakingsats'])}</div>
-          </div>
-          <div>
-            <div>Card Transactions ☕</div>{' '}
-            <div>
-              {dollarUSLocale.format(props['card transactions'])}
-            </div>
-          </div>
-          <div>
-            <div>Card Cashbacks 💰 🔙</div>{' '}
-            <div>
-              {dollarUSLocale.format(props['card cashbacks'])}
-            </div>
-          </div>
-          <div>
-            <div>Other 🪤 </div>{' '}
-            <div>{dollarUSLocale.format(props['other'])}</div>
-          </div>
+        <div className="flex justify-center flex space-x-6">
+          <ToggleButton
+            title="Crypto Cashout 💎🙌"
+            input={dollarUSLocale.format(props['crypto cashout'])}
+            description="Sum of btc cashout."
+          />
+          <ToggleButton
+            title="Crypto Funding 🧨"
+            input={dollarUSLocale.format(props['crypto funding'])}
+            description="Sum of btc funded using Blockchain."
+          />
+          <ToggleButton
+            title="Fiat Cashout 💸"
+            input={dollarUSLocale.format(props['fiat cashout'])}
+            description="Sum of fiat cashout."
+          />
+          <ToggleButton
+            title="Fiat Funding 🏦"
+            input={dollarUSLocale.format(props['fiat funding'])}
+            description="Sum of fiat funding."
+          />
+          <ToggleButton
+            title="Peer Transfer 🔛"
+            input={dollarUSLocale.format(props['peer transfer'])}
+            description="Diffrence between amount debited/credited to other users on Shakepay."
+          />
+          <ToggleButton
+            title="Purchase Or Sale 📈"
+            input={dollarUSLocale.format(props['purchase/sale'])}
+            description="Diffrence between amount debited/credited."
+          />
+          <ToggleButton
+            title="Shakingsats 🤝"
+            input={dollarUSLocale.format(props['shakingsats'])}
+            description="Sum of btc funded using Blockchain."
+          />
+          <ToggleButton
+            title="Card Transactions ☕"
+            input={dollarUSLocale.format(props['card transactions'])}
+            description="Sum of card transactions."
+          />
+          <ToggleButton
+            title="Card Cashbacks 💰"
+            input={dollarUSLocale.format(props['card cashbacks'])}
+            description="Sum of card cashbacks."
+          />
+          <ToggleButton
+            title="Referrals 🪤"
+            input={dollarUSLocale.format(props['other'])}
+            description="Sum of referrals (other)."
+          />
         </div>
       </div>
     </div>
