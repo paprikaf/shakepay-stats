@@ -61,8 +61,6 @@ export const stats = (
         Operations.transactionTypeRecord(
           TransactionType.CryptoFunding
         ),
-        // Operations.getCollection('Amount Credited'),
-        // Operations.getSum,
         Operations.diffrenceSequence,
         Operations.convertBTCToCAD(btcPriceInCAD)
       );
@@ -72,16 +70,12 @@ export const stats = (
         Operations.transactionTypeRecord(
           TransactionType.CryptoCashout
         ),
-        // Operations.getCollection('Amount Debited'),
-        // Operations.getSum
         Operations.diffrenceSequence
       );
 
       const fiatCashoutSum = pipe(
         csvItems,
         Operations.transactionTypeRecord(TransactionType.FiatCashout),
-        // Operations.getCollection('Amount Debited'),
-        // Operations.getSum
         Operations.diffrenceSequence
       );
 
@@ -91,47 +85,30 @@ export const stats = (
           TransactionType.PeerTransfer
         ),
         Operations.diffrenceSequence
-        // Operations.getCollection('Amount Debited'),
-        // Operations.getSum
       );
-
+      const cardTransactionsSum = pipe(
+        csvItems,
+        Operations.transactionTypeRecord(
+          TransactionType.CardTransactions
+        ),
+        Operations.getCollection('Amount Debited'),
+        Operations.getSum
+      );
+      const cardCashbacksSum = pipe(
+        csvItems,
+        Operations.transactionTypeRecord(
+          TransactionType.CardCashbacks
+        ),
+        Operations.getCollection('Amount Credited'),
+        Operations.getSum,
+        Operations.convertBTCToCAD(btcPriceInCAD)
+      );
       const otherSum = pipe(
         csvItems,
         Operations.transactionTypeRecord(TransactionType.Other),
         Operations.getCollection('Amount Credited'),
         Operations.getSum
       );
-      // const purchase = pipe (csvItems,
-      //   Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
-      //   Operations.getAmountDebitedPurchasedOrSale(DirectionType.Purchase),
-      //   Operations.getCollection('Amount Debited'),
-      //   Operations.getSum,
-      //   )
-
-      // const sale = pipe(csvItems,
-      //   Operations.transactionTypeRecord(TransactionType.PurchaseOrSale),
-      //   Operations.getAmountDebitedPurchasedOrSale(DirectionType.Sale),
-      //   Operations.getCollectionDate('Amount Debited'),
-      //   Operations.getSum,
-      //   Operations.convertBTCToCAD(btcPriceInCAD)
-      //   )
-
-      // console.log('Amount Debited purchase', purchase);
-      // console.log('Amount Debited sale', sale);
-
-      // const AmountLeft = purchase - sale
-      // console.log(AmountLeft);
-
-      // console.log(
-      // 'PurchaseOrSale:', purchaseSum,
-      // 'FiatFunding:', fiatFundingSum,
-      // 'ShakingSats:', shakingSatsSum,
-      // 'CryptoFunding: ', cryptoFundingSum,
-      // 'PeerTransfer:', peerTransferSum,
-      // 'FiatCashout:', fiatCashoutSum,
-      // 'CryptoCashout:', cryptoCashoutSum,
-      // 'Other:', otherSum,
-      // )
 
       return {
         [TransactionType.PurchaseOrSale]: purchaseSum,
@@ -141,6 +118,8 @@ export const stats = (
         [TransactionType.PeerTransfer]: peerTransferSum,
         [TransactionType.FiatCashout]: fiatCashoutSum,
         [TransactionType.CryptoCashout]: cryptoCashoutSum,
+        [TransactionType.CardTransactions]: cardTransactionsSum,
+        [TransactionType.CardCashbacks]: cardCashbacksSum,
         [TransactionType.Other]: otherSum,
       };
     })
