@@ -54,7 +54,7 @@ const StatsDashBoardComponent: React.FC<Csv.Response> = (props) => {
           <ToggleButton
             title="Shakingsats 🤝"
             input={dollarUSLocale.format(props['shakingsats'])}
-            description="Sum of btc funded using Blockchain."
+            description="Sum of shaking."
           />
           <ToggleButton
             title="Card Transactions ☕"
