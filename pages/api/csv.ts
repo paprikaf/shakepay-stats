@@ -32,32 +32,12 @@ const parseFile = (input: any) => {
   );
 };
 
-// const readFile = (fileName: string) =>
-//   TE.tryCatch(
-//     () => {
-//       return new Promise((resolve, reject) => {
-//         const stream: unknown[] = [];
-//         fs.createReadStream(fileName)
-//           .pipe(csv())
-//           .on('data', (data) => stream.push(data))
-//           .on('error', reject)
-//           .on('end', () => {
-//             resolve(stream);
-//           });
-//       });
-//     },
-//     (_) => Errors.APIUpload.CsvParseError({})
-//   );
-
 const Upload = t.type(
   {
     fieldname: t.string,
     originalname: t.string,
     encoding: t.string,
     mimetype: t.string,
-    // destination: t.string, //not needed anymore switiching to memeroy storage
-    // filename: t.string, //not needed anymore switiching to memeroy storage
-    // path: t.string, //not needed anymore switiching to memeroy storage
     size: t.number,
     buffer: t.unknown,
   },
@@ -79,7 +59,6 @@ const storage = multer.memoryStorage();
 // TODO: when a bad field name is sent the error is sent back as plain text, we need JSON here.
 handler.use(
   multer({
-    // dest: 'tmp/', //Vercel Production Error: EROFS: read-only file system, mkdir '/var/task/tmp'
     storage: storage,
   }).single(Csv.fieldName)
 );
