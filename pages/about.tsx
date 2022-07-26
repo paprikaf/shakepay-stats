@@ -39,6 +39,7 @@ export default function About() {
             store it. We simply use the data to compute the stats
             we're showing you.{' '}
             <span className="underline">Nothing is persisted.</span>
+            Please note at the moment not supporting Etherum stats.
           </p>
         </div>
       </div>
